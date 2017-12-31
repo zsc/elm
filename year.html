@@ -8263,76 +8263,76 @@ var _user$project$Main$view = function (model) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$input,
+				_elm_lang$html$Html$img,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$type_('range'),
+					_0: _elm_lang$html$Html_Attributes$src(
+						_elm_lang$core$Tuple$first(model.url)),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$min('2007'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$max('2017'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$value(
-									_elm_lang$core$Basics$toString(model.year)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$Update),
-									_1: {ctor: '[]'}
-								}
-							}
-						}
+						_0: _elm_lang$html$Html_Attributes$width(200),
+						_1: {ctor: '[]'}
 					}
 				},
 				{ctor: '[]'}),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$Basics$toString(model.year)),
+				_0: A2(
+					_elm_lang$html$Html$br,
+					{ctor: '[]'},
+					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$br,
-						{ctor: '[]'},
+						_elm_lang$html$Html$img,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$src(
+								_elm_lang$core$Tuple$second(model.url)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$height(400),
+								_1: {ctor: '[]'}
+							}
+						},
 						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$img,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(
-									_elm_lang$core$Tuple$first(model.url)),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$width(200),
-									_1: {ctor: '[]'}
-								}
-							},
+							_elm_lang$html$Html$br,
+							{ctor: '[]'},
 							{ctor: '[]'}),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$br,
-								{ctor: '[]'},
+								_elm_lang$html$Html$input,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('range'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$min('2007'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$max('2017'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$value(
+													_elm_lang$core$Basics$toString(model.year)),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$Update),
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								},
 								{ctor: '[]'}),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$img,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$src(
-											_elm_lang$core$Tuple$second(model.url)),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$height(400),
-											_1: {ctor: '[]'}
-										}
-									},
-									{ctor: '[]'}),
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(model.year)),
 								_1: {ctor: '[]'}
 							}
 						}

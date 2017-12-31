@@ -22,7 +22,11 @@ update (Update v) model =
 
 view model =
   div []
-    [input
+    [img [src (Tuple.first model.url), width 200] []
+    , br [] []
+    , img [src (Tuple.second model.url), height 400] []
+    , br [] []
+    , input
       [ type_ "range"
       , H.min "2007"
       , H.max "2017"
@@ -30,10 +34,6 @@ view model =
       , onInput Update
       ] []
     , text <| toString model.year
-    , br [] []
-    , img [src (Tuple.first model.url), width 200] []
-    , br [] []
-    , img [src (Tuple.second model.url), height 400] []
     ]
 
 main =
