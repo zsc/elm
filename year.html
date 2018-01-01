@@ -8233,16 +8233,17 @@ var _elm_lang$html$Html_Events$Options = F2(
 	});
 var _user$project$Main$casUrl = {ctor: '_Tuple2', _0: 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bd/CAS_logo_2.png/180px-CAS_logo_2.png', _1: 'year/DSC_3550.jpg'};
 var _user$project$Main$megviiUrl = {ctor: '_Tuple2', _0: 'https://avatars2.githubusercontent.com/u/11012279?s=200&v=4', _1: 'year/IMG_4032.jpg'};
-var _user$project$Main$googleUrl = {ctor: '_Tuple2', _0: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png', _1: 'year/IMG_20131126_192441.jpg'};
+var _user$project$Main$googleUrl = {ctor: '_Tuple2', _0: 'year/googlelogo_color_272x92dp.png', _1: 'year/IMG_20131126_192441.jpg'};
+var _user$project$Main$tsinghuaUrl = {ctor: '_Tuple2', _0: 'http://www.tsinghua.edu.cn/publish/newthuen/images/logo.png', _1: 'year/56238459.jpg'};
 var _user$project$Main$getUrl = function (year) {
-	return (_elm_lang$core$Native_Utils.cmp(2014, year) < 0) ? _user$project$Main$megviiUrl : ((_elm_lang$core$Native_Utils.cmp(2011, year) < 0) ? _user$project$Main$googleUrl : _user$project$Main$casUrl);
+	return (_elm_lang$core$Native_Utils.cmp(2014, year) < 0) ? _user$project$Main$megviiUrl : ((_elm_lang$core$Native_Utils.cmp(2010, year) < 0) ? _user$project$Main$googleUrl : ((_elm_lang$core$Native_Utils.cmp(2004, year) < 0) ? _user$project$Main$casUrl : _user$project$Main$tsinghuaUrl));
 };
 var _user$project$Main$update = F2(
 	function (_p0, model) {
 		var _p1 = _p0;
 		var year = A2(
 			_elm_lang$core$Result$withDefault,
-			2017,
+			2016,
 			_elm_lang$core$String$toInt(_p1._0));
 		return {
 			year: year,
@@ -8257,30 +8258,62 @@ var _user$project$Main$Update = function (a) {
 	return {ctor: 'Update', _0: a};
 };
 var _user$project$Main$view = function (model) {
+	var style_ = function (x) {
+		return _elm_lang$core$Native_Utils.eq(model.year, x) ? _elm_lang$html$Html_Attributes$style(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'fontWeight', _1: 'bold'},
+				_1: {ctor: '[]'}
+			}) : _elm_lang$html$Html_Attributes$style(
+			{ctor: '[]'});
+	};
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$img,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$src(
-						_elm_lang$core$Tuple$first(model.url)),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$width(200),
-						_1: {ctor: '[]'}
-					}
-				},
-				{ctor: '[]'}),
-			_1: {
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$br,
-					{ctor: '[]'},
-					{ctor: '[]'}),
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href('https://github.com/zsc/elm'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$img,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'top', _1: '0'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'left', _1: '0'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'border', _1: '0'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$src('https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67'),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -8299,51 +8332,80 @@ var _user$project$Main$view = function (model) {
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$br,
-							{ctor: '[]'},
+							_elm_lang$html$Html$img,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(
+									_elm_lang$core$Tuple$first(model.url)),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$width(200),
+									_1: {ctor: '[]'}
+								}
+							},
 							{ctor: '[]'}),
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$input,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$type_('range'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$min('2007'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$max('2017'),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$value(
-													_elm_lang$core$Basics$toString(model.year)),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$Update),
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									}
-								},
+								_elm_lang$html$Html$br,
+								{ctor: '[]'},
 								{ctor: '[]'}),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(model.year)),
+								_0: A2(
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
 								_1: {ctor: '[]'}
 							}
 						}
 					}
 				}
-			}
-		});
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (x) {
+					return A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_user$project$Main$Update(
+									_elm_lang$core$Basics$toString(x))),
+							_1: {
+								ctor: '::',
+								_0: style_(x),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								_elm_lang$core$Basics$toString(x)),
+							_1: {ctor: '[]'}
+						});
+				},
+				{
+					ctor: '::',
+					_0: 2000,
+					_1: {
+						ctor: '::',
+						_0: 2007,
+						_1: {
+							ctor: '::',
+							_0: 2011,
+							_1: {
+								ctor: '::',
+								_0: 2016,
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				})));
 };
 var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
 	{
-		model: {year: 2017, url: _user$project$Main$megviiUrl},
+		model: {year: 2016, url: _user$project$Main$megviiUrl},
 		view: _user$project$Main$view,
 		update: _user$project$Main$update
 	})();
