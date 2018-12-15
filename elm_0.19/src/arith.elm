@@ -97,5 +97,5 @@ view model =
   div []
     [ div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
-    , div [style "text-align" "center"] [buttonN]
+    , div [style "font-size" "64px", style "text-align" "center"] [buttonN]
     ]
