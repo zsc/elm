@@ -3,7 +3,7 @@ import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing ( style )
 import Random
-
+import Time
 
 
 -- MAIN
@@ -52,12 +52,13 @@ rand =
 
 type alias Model =
   { dieFace : Expr
+  , time : Time.Posix
   }
 
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( Model (Plus 1 1)
+  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0}
   , Cmd.none
   )
 
@@ -69,6 +70,7 @@ init _ =
 type Msg
   = Roll
   | NewFace Expr
+  | Tick Time.Posix
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -80,10 +82,14 @@ update msg model =
       )
 
     NewFace newFace ->
-      ( Model newFace
+      ( { model | dieFace = newFace }
       , Cmd.none
       )
 
+    Tick posix ->
+      ( { model | time = posix }
+      , Cmd.none
+      )
 
 
 -- SUBSCRIPTIONS
@@ -91,8 +97,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
-
+  Time.every 100 Tick
 
 
 -- VIEW
@@ -105,4 +110,5 @@ view model =
     [ div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center"] [buttonN]
+    , div [] [ text (String.fromInt (Time.posixToMillis model.time)) ]
     ]
