@@ -90,7 +90,7 @@ subscriptions model =
 
 -- VIEW
 
-buttonN = button [ onClick Roll ] [div [style "font-size" "32px"] [text "Next" ]]
+buttonN = button [ onClick Roll ] [div [style "font-size" "32px", style "height" "48px"] [text "Next" ]]
 
 view : Model -> Html Msg
 view model =
