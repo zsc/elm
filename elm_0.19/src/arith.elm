@@ -1,7 +1,10 @@
+import Array
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing ( style )
+import List
+import Maybe
 import Random
 import Time
 
@@ -20,6 +23,13 @@ main =
 
 
 -- MODEL
+
+qps : List Time.Posix -> Int
+qps clicks =
+    if List.length clicks < 2 then 0 else
+        let cs = List.map Time.posixToMillis clicks in
+        let delta = (Maybe.withDefault 0 (List.head cs)) - (Maybe.withDefault 0 (List.head (List.drop (List.length cs - 1) cs))) in
+        round (60000.0 / (toFloat delta) * (toFloat (List.length cs - 1)))
 
 type Expr
  = Plus Int Int
@@ -53,12 +63,13 @@ rand =
 type alias Model =
   { dieFace : Expr
   , time : Time.Posix
+  , clicks : List Time.Posix
   }
 
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0}
+  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = []}
   , Cmd.none
   )
 
@@ -77,7 +88,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
-      ( model
+      ( { model | clicks = List.take 20 (model.time :: model.clicks)}
       , Random.generate NewFace rand
       )
 
@@ -110,5 +121,5 @@ view model =
     [ div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center"] [buttonN]
-    , div [] [ text (String.fromInt (Time.posixToMillis model.time)) ]
+    , div [style "font-size" "32px"] [ text ("per minute: " ++ String.fromInt (qps model.clicks)) ]
     ]
