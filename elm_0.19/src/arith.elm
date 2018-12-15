@@ -40,8 +40,15 @@ func op1 op2 op =
     if op == 0 then Plus op1 op2 else Minus op1 op2
 
 rand : Random.Generator Expr
-rand = Random.map3 func (Random.int 0 9) (Random.int 0 9) (Random.int 0 1)
-
+rand =
+    Random.map3 func (Random.int 0 9) (Random.int 0 9) (Random.int 0 1)
+        |> Random.andThen
+            (\expr ->
+                 if eval expr < 0 then
+                     rand
+                 else
+                     Random.uniform expr []
+            )
 
 type alias Model =
   { dieFace : Expr
