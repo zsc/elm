@@ -24,12 +24,13 @@ main =
 
 -- MODEL
 
-qps : List Time.Posix -> Int
-qps clicks =
-    if List.length clicks < 2 then 0 else
+stat : List Time.Posix -> String
+stat clicks =
+    if List.length clicks < 2 then "Click \"Next\"" else
         let cs = List.map Time.posixToMillis clicks in
         let delta = (Maybe.withDefault 0 (List.head cs)) - (Maybe.withDefault 0 (List.head (List.drop (List.length cs - 1) cs))) in
-        round (60000.0 / (toFloat delta) * (toFloat (List.length cs - 1)))
+        let qps = round (60000.0 / (toFloat delta) * (toFloat (List.length cs - 1))) in
+        "Total: " ++ String.fromInt (List.length cs) ++ ", per minute: " ++ String.fromInt qps
 
 type Expr
  = Plus Int Int
@@ -88,7 +89,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
-      ( { model | clicks = List.take 20 (model.time :: model.clicks)}
+      ( { model | clicks = model.time :: model.clicks}
       , Random.generate NewFace rand
       )
 
@@ -121,5 +122,5 @@ view model =
     [ div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center"] [buttonN]
-    , div [style "font-size" "32px"] [ text ("per minute: " ++ String.fromInt (qps model.clicks)) ]
+    , div [style "font-size" "32px"] [ text ((stat model.clicks)) ]
     ]
