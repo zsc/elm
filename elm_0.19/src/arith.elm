@@ -133,7 +133,7 @@ view model =
   div []
     ([ div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
-    , div [style "text-align" "center"] [buttonN]
+    , div [style "text-align" "center", style "height" "48px"] [buttonN]
     , div [style "font-size" "32px"] [ text (stat model.clicks)]
     , br [] []
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)))
