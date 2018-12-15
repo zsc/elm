@@ -1,6 +1,7 @@
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
+import Html.Attributes exposing ( style )
 import Random
 
 
@@ -89,10 +90,12 @@ subscriptions model =
 
 -- VIEW
 
+buttonN = button [ onClick Roll ] [div [style "font-size" "32px"] [text "Next" ]]
 
 view : Model -> Html Msg
 view model =
   div []
-    [ h1 [] [ text (repr model.dieFace) ]
-    , button [ onClick Roll ] [ text "Roll" ]
+    [ div [style "font-size" "64px", style "text-align" "center"] 
+          [ text (repr model.dieFace) ]
+    , div [style "text-align" "center"] [buttonN]
     ]
