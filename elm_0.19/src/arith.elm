@@ -29,6 +29,7 @@ type Expr
  | Minus Int Int
  | Times Int Int
  | Div Int Int
+ | Exp Int Int
  
 eval : Expr -> Int
 eval expr = case expr of
@@ -36,6 +37,7 @@ eval expr = case expr of
     Minus a b -> a - b
     Times a b -> a * b
     Div a b -> a // b
+    Exp a b -> a ^ b
 
 repr : Expr -> String
 repr expr = case expr of
@@ -43,6 +45,7 @@ repr expr = case expr of
     Minus a b -> String.fromInt a ++ " - " ++ String.fromInt b
     Times a b -> String.fromInt a ++ " × " ++ String.fromInt b
     Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
+    Exp a b -> String.fromInt a ++ " ^ " ++ String.fromInt b
 
 toExpr : Int -> Int -> Int -> Expr
 toExpr op1 op2 op =
@@ -68,6 +71,7 @@ levelDescription level = case level of
   1 -> "Plus/minus under 10."
   2 -> "Plus/minus under 100."
   3 -> "Plus/minus under 100 and times/divsion under 10."
+  4 -> "Plus/minus under 100, times/divsion under 10 and exponentation of 1 ~ 3."
   _ -> Debug.todo "Unknown level"
 
 genLevel2 : Random.Generator Expr
@@ -81,12 +85,19 @@ genLevel3 =
            1 -> Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.constant 2)
            _ -> genLevel2)
 
+genLevel4 = 
+  Random.int 0 3 |> Random.andThen
+      (\i -> case i of
+           0 -> Random.map2 Exp (Random.int 1 3) (Random.int 0 9)
+           _ -> genLevel3)
+
 rand : Int -> Random.Generator Expr
 rand level =
     case level of
       1 -> filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 1))
       2 -> genLevel2
       3 -> genLevel3
+      4 -> genLevel4
       _ -> Debug.todo "Unknown level"
 
 type alias Click = 

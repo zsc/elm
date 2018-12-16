@@ -5416,6 +5416,7 @@ var author$project$Main$subscriptions = function (model) {
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
+var elm$core$Basics$pow = _Basics_pow;
 var author$project$Main$eval = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
@@ -5430,10 +5431,14 @@ var author$project$Main$eval = function (expr) {
 			var a = expr.a;
 			var b = expr.b;
 			return a * b;
-		default:
+		case 'Div':
 			var a = expr.a;
 			var b = expr.b;
 			return (a / b) | 0;
+		default:
+			var a = expr.a;
+			var b = expr.b;
+			return A2(elm$core$Basics$pow, a, b);
 	}
 };
 var elm$random$Random$Generator = function (a) {
@@ -5494,8 +5499,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 54, column: 12},
-						end: {line: 54, column: 22}
+						start: {line: 57, column: 12},
+						end: {line: 57, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -5622,6 +5627,24 @@ var author$project$Main$genLevel3 = A2(
 		}
 	},
 	A2(elm$random$Random$int, 0, 2));
+var author$project$Main$Exp = F2(
+	function (a, b) {
+		return {$: 'Exp', a: a, b: b};
+	});
+var author$project$Main$genLevel4 = A2(
+	elm$random$Random$andThen,
+	function (i) {
+		if (!i) {
+			return A3(
+				elm$random$Random$map2,
+				author$project$Main$Exp,
+				A2(elm$random$Random$int, 1, 3),
+				A2(elm$random$Random$int, 0, 9));
+		} else {
+			return author$project$Main$genLevel3;
+		}
+	},
+	A2(elm$random$Random$int, 0, 3));
 var author$project$Main$rand = function (level) {
 	switch (level) {
 		case 1:
@@ -5636,12 +5659,14 @@ var author$project$Main$rand = function (level) {
 			return author$project$Main$genLevel2;
 		case 3:
 			return author$project$Main$genLevel3;
+		case 4:
+			return author$project$Main$genLevel4;
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 90, column: 12},
-					end: {line: 90, column: 22}
+					start: {line: 101, column: 12},
+					end: {line: 101, column: 22}
 				})('Unknown level');
 	}
 };
@@ -5848,12 +5873,14 @@ var author$project$Main$levelDescription = function (level) {
 			return 'Plus/minus under 100.';
 		case 3:
 			return 'Plus/minus under 100 and times/divsion under 10.';
+		case 4:
+			return 'Plus/minus under 100, times/divsion under 10 and exponentation of 1 ~ 3.';
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 71, column: 8},
-					end: {line: 71, column: 18}
+					start: {line: 75, column: 8},
+					end: {line: 75, column: 18}
 				})('Unknown level');
 	}
 };
@@ -5871,10 +5898,14 @@ var author$project$Main$repr = function (expr) {
 			var a = expr.a;
 			var b = expr.b;
 			return elm$core$String$fromInt(a) + (' × ' + elm$core$String$fromInt(b));
-		default:
+		case 'Div':
 			var a = expr.a;
 			var b = expr.b;
 			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
+		default:
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' ^ ' + elm$core$String$fromInt(b));
 	}
 };
 var elm$core$Basics$round = _Basics_round;
