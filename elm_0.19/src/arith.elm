@@ -179,8 +179,9 @@ buttonN = button [ onClick Roll ] [div [style "font-size" "32px", style "height"
 view : Model -> Html Msg
 view model =
   div []
-    ([input [ placeholder "Level", onInput Change ] []
-    , div [style "font-size" "32px"] [ text ("Level " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
+    ([div [style "text-align" "center"] [input [ placeholder "Level", onInput Change ] []]
+    , div [style "font-size" "32px", style "text-align" "center"]
+          [ text ("Level " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
     , div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center", style "height" "48px"] [buttonN]
