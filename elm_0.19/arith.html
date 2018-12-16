@@ -6143,18 +6143,28 @@ var author$project$Main$view = function (model) {
 			_List_fromArray(
 				[
 					A2(
-					elm$html$Html$input,
+					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$placeholder('Level'),
-							elm$html$Html$Events$onInput(author$project$Main$Change)
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
 						]),
-					_List_Nil),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$input,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$placeholder('Level'),
+									elm$html$Html$Events$onInput(author$project$Main$Change)
+								]),
+							_List_Nil)
+						])),
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px'),
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
 						]),
 					_List_fromArray(
 						[
