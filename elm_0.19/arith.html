@@ -5674,6 +5674,38 @@ var author$project$Main$Log = F2(
 var author$project$Main$Sqrt = function (a) {
 	return {$: 'Sqrt', a: a};
 };
+var elm$random$Random$pair = F2(
+	function (genA, genB) {
+		return A3(
+			elm$random$Random$map2,
+			F2(
+				function (a, b) {
+					return _Utils_Tuple2(a, b);
+				}),
+			genA,
+			genB);
+	});
+function author$project$Main$cyclic$genLogPair() {
+	return A2(
+		elm$random$Random$andThen,
+		function (_n0) {
+			var a = _n0.a;
+			var b = _n0.b;
+			return (A2(elm$core$Basics$pow, a, b) > 1000) ? author$project$Main$cyclic$genLogPair() : elm$random$Random$constant(
+				_Utils_Tuple2(a, b));
+		},
+		A2(
+			elm$random$Random$pair,
+			A2(elm$random$Random$int, 1, 9),
+			A2(elm$random$Random$int, 0, 9)));
+}
+try {
+	var author$project$Main$genLogPair = author$project$Main$cyclic$genLogPair();
+	author$project$Main$cyclic$genLogPair = function () {
+		return author$project$Main$genLogPair;
+	};
+} catch ($) {
+throw 'Some top-level definitions from `Main` are causing infinite recursion:\n\n  ┌─────┐\n  │    genLogPair\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.0/halting-problem to learn how to fix it!';}
 var elm$random$Random$map = F2(
 	function (func, _n0) {
 		var genA = _n0.a;
@@ -5699,17 +5731,17 @@ var author$project$Main$genLevel5 = A2(
 						A2(elm$random$Random$int, 0, 9),
 						A2(elm$random$Random$int, 0, 9)));
 			case 1:
-				return A3(
-					elm$random$Random$map2,
-					F2(
-						function (a, b) {
-							return A2(
-								author$project$Main$Log,
-								a,
-								A2(elm$core$Basics$pow, a, b));
-						}),
-					A2(elm$random$Random$int, 1, 9),
-					A2(elm$random$Random$int, 0, 9));
+				return A2(
+					elm$random$Random$map,
+					function (_n1) {
+						var a = _n1.a;
+						var b = _n1.b;
+						return A2(
+							author$project$Main$Log,
+							a,
+							A2(elm$core$Basics$pow, a, b));
+					},
+					author$project$Main$genLogPair);
 			case 2:
 				return A2(
 					elm$random$Random$map,
@@ -5744,8 +5776,8 @@ var author$project$Main$rand = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 133, column: 12},
-					end: {line: 133, column: 22}
+					start: {line: 137, column: 12},
+					end: {line: 137, column: 22}
 				})('Unknown level');
 	}
 };

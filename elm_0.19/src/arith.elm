@@ -114,11 +114,15 @@ genLevel4 =
            0 -> filterTooLarge (Random.map2 Exp (Random.int 0 9) (Random.int 0 9))
            _ -> genLevel3)
 
+genLogPair =
+  Random.pair (Random.int 1 9) (Random.int 0 9) |> Random.andThen
+      (\(a, b) -> if a ^ b > 1000 then genLogPair else Random.constant (a, b))
+
 genLevel5 =
   Random.int 0 5 |> Random.andThen
       (\i -> case i of
            0 -> filterTooLarge (Random.map2 Exp (Random.int 0 9) (Random.int 0 9))
-           1 -> Random.map2 (\a b -> Log a (a ^ b)) (Random.int 1 9) (Random.int 0 9)
+           1 -> Random.map (\(a, b) -> Log a (a ^ b)) genLogPair 
            2 -> Random.map (\a -> Sqrt (a * a)) (Random.int 1 19)
            _ -> genLevel3)
 
