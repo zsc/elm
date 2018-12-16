@@ -72,12 +72,20 @@ filterNegative g =
              else Random.constant expr
         )
 
-levelDescription : Int -> String
-levelDescription level = case level of
-  1 -> "Plus/minus under 10."
-  2 -> "Plus/minus under 100."
-  3 -> "Plus/minus under 100 and times/divsion under 10."
-  4 -> "Plus/minus under 100, times/divsion under 10 and exponentation of 1 ~ 3."
+levelDescription : Language -> Int -> String
+levelDescription lang level = case level of
+  1 -> case lang of
+      LEngish -> "Plus/minus under 10"
+      LChinese -> "十以下加减法"
+  2 -> case lang of
+      LEngish -> "Plus/minus under 100"
+      LChinese -> "百以下加减法"
+  3 -> case lang of
+      LEngish -> "Plus/minus/times/division under 100"
+      LChinese -> "百以下加减乘除"
+  4 -> case lang of
+      LEngish -> "Plus/minus/time/divsion under 100 and exponentation under 10."
+      LChinese -> "百以下加减乘除和十以下指数"
   _ -> Debug.todo "Unknown level"
 
 genLevel2 : Random.Generator Expr
@@ -94,7 +102,7 @@ genLevel3 =
 genLevel4 = 
   Random.int 0 3 |> Random.andThen
       (\i -> case i of
-           0 -> filterTooLarge (Random.map2 Exp (Random.int 1 3) (Random.int 0 9))
+           0 -> filterTooLarge (Random.map2 Exp (Random.int 0 9) (Random.int 0 9))
            _ -> genLevel3)
 
 rand : Int -> Random.Generator Expr
@@ -111,18 +119,22 @@ type alias Click =
   , expr : Expr
   }
 
+type Language =
+  LEngish
+  | LChinese
 
 type alias Model =
   { dieFace : Expr
   , time : Time.Posix
   , clicks : List Click
   , level : Int
+  , lang : Language
   }
 
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel}
+  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel, lang = LChinese}
   , Cmd.none
   )
 
@@ -134,13 +146,12 @@ worst clicks =
       let top = List.take 3 (List.reverse (List.sortBy (\(a,b) -> b) diffs)) in
       (List.map (\(a, b) -> text (String.fromInt (round (toFloat b / 100.0)) ++ ", " ++ repr a)) top)
 
-stat : List Click -> String
+stat : List Click -> (Int, Int)
 stat clicks =
-    if List.length clicks < 2 then "Click \"Next\"" else
+    if List.length clicks < 2 then (0, 0) else
         let cs = List.map (\h -> Time.posixToMillis h.time) clicks in
         let delta = (Maybe.withDefault 0 (List.head cs)) - (Maybe.withDefault 0 (List.head (List.drop (List.length cs - 1) cs))) in
-        let qps = round (60000.0 / (toFloat delta) * (toFloat (List.length cs - 1))) in
-        "Total: " ++ String.fromInt (List.length cs) ++ ", per minute: " ++ String.fromInt qps
+        (List.length cs, round (60000.0 / (toFloat delta) * (toFloat (List.length cs - 1))))
 
 -- UPDATE
 
@@ -149,7 +160,7 @@ type Msg
   = Roll
   | NewFace Expr
   | Tick Time.Posix
-  | Change String
+  | Change Int
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -171,7 +182,7 @@ update msg model =
       )
 
     Change level ->
-      ( { model | level = Maybe.withDefault defaultLevel (String.toInt level) }
+      ( { model | level = level }
       , Cmd.none
       )
 
@@ -185,17 +196,27 @@ subscriptions model =
 
 -- VIEW
 
+strStat lang (total, qps) = case lang of
+  LEngish -> "Total: " ++ String.fromInt total ++ ", per minute: " ++ String.fromInt qps
+  LChinese -> "共：" ++ String.fromInt total ++ "，每分钟：" ++ String.fromInt qps
+
+strLevel lang = case lang of
+  LEngish -> "Level"
+  LChinese -> "关卡"
+
 buttonN = button [ onClick Roll ] [div [style "font-size" "32px", style "height" "48px"] [text "Next" ]]
+
+levelButtons = List.map (\l -> button [onClick (Change l)] [div [style "font-size" "32px", style "height" "48px"] [text (String.fromInt l) ]]) [1, 2, 3, 4]
 
 view : Model -> Html Msg
 view model =
   div []
-    ([div [style "text-align" "center"] [input [ placeholder "Level", onInput Change ] []]
+    ([div [style "text-align" "center"] levelButtons
     , div [style "font-size" "32px", style "text-align" "center"]
-          [ text ("Level " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
+          [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
     , div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center", style "height" "48px"] [buttonN]
-    , div [style "font-size" "32px"] [ text (stat model.clicks)]
+    , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
     , br [] []
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)))

@@ -4403,6 +4403,7 @@ function _Browser_load(url)
 		}
 	}));
 }
+var author$project$Main$LChinese = {$: 'LChinese'};
 var author$project$Main$Plus = F2(
 	function (a, b) {
 		return {$: 'Plus', a: a, b: b};
@@ -4897,6 +4898,7 @@ var author$project$Main$init = function (_n0) {
 		{
 			clicks: _List_Nil,
 			dieFace: A2(author$project$Main$Plus, 1, 1),
+			lang: author$project$Main$LChinese,
 			level: author$project$Main$defaultLevel,
 			time: elm$time$Time$millisToPosix(0)
 		},
@@ -5647,7 +5649,7 @@ var author$project$Main$genLevel4 = A2(
 				A3(
 					elm$random$Random$map2,
 					author$project$Main$Exp,
-					A2(elm$random$Random$int, 1, 3),
+					A2(elm$random$Random$int, 0, 9),
 					A2(elm$random$Random$int, 0, 9)));
 		} else {
 			return author$project$Main$genLevel3;
@@ -5674,21 +5676,11 @@ var author$project$Main$rand = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 107, column: 12},
-					end: {line: 107, column: 22}
+					start: {line: 115, column: 12},
+					end: {line: 115, column: 22}
 				})('Unknown level');
 	}
 };
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
-var elm$core$String$toInt = _String_toInt;
 var elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
 };
@@ -5803,18 +5795,10 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{
-							level: A2(
-								elm$core$Maybe$withDefault,
-								author$project$Main$defaultLevel,
-								elm$core$String$toInt(level))
-						}),
+						{level: level}),
 					elm$core$Platform$Cmd$none);
 		}
 	});
-var author$project$Main$Change = function (a) {
-	return {$: 'Change', a: a};
-};
 var author$project$Main$Roll = {$: 'Roll'};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
@@ -5874,25 +5858,73 @@ var author$project$Main$buttonN = A2(
 					elm$html$Html$text('Next')
 				]))
 		]));
-var author$project$Main$levelDescription = function (level) {
-	switch (level) {
-		case 1:
-			return 'Plus/minus under 10.';
-		case 2:
-			return 'Plus/minus under 100.';
-		case 3:
-			return 'Plus/minus under 100 and times/divsion under 10.';
-		case 4:
-			return 'Plus/minus under 100, times/divsion under 10 and exponentation of 1 ~ 3.';
-		default:
-			return _Debug_todo(
-				'Main',
-				{
-					start: {line: 81, column: 8},
-					end: {line: 81, column: 18}
-				})('Unknown level');
-	}
+var author$project$Main$Change = function (a) {
+	return {$: 'Change', a: a};
 };
+var author$project$Main$levelButtons = A2(
+	elm$core$List$map,
+	function (l) {
+		return A2(
+			elm$html$Html$button,
+			_List_fromArray(
+				[
+					elm$html$Html$Events$onClick(
+					author$project$Main$Change(l))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px'),
+							A2(elm$html$Html$Attributes$style, 'height', '48px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							elm$core$String$fromInt(l))
+						]))
+				]));
+	},
+	_List_fromArray(
+		[1, 2, 3, 4]));
+var author$project$Main$levelDescription = F2(
+	function (lang, level) {
+		switch (level) {
+			case 1:
+				if (lang.$ === 'LEngish') {
+					return 'Plus/minus under 10';
+				} else {
+					return '十以下加减法';
+				}
+			case 2:
+				if (lang.$ === 'LEngish') {
+					return 'Plus/minus under 100';
+				} else {
+					return '百以下加减法';
+				}
+			case 3:
+				if (lang.$ === 'LEngish') {
+					return 'Plus/minus/times/division under 100';
+				} else {
+					return '百以下加减乘除';
+				}
+			case 4:
+				if (lang.$ === 'LEngish') {
+					return 'Plus/minus/time/divsion under 100 and exponentation under 10.';
+				} else {
+					return '百以下加减乘除和十以下指数';
+				}
+			default:
+				return _Debug_todo(
+					'Main',
+					{
+						start: {line: 89, column: 8},
+						end: {line: 89, column: 18}
+					})('Unknown level');
+		}
+	});
 var author$project$Main$repr = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
@@ -5948,9 +5980,18 @@ var elm$core$List$head = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
 var author$project$Main$stat = function (clicks) {
 	if (elm$core$List$length(clicks) < 2) {
-		return 'Click \"Next\"';
+		return _Utils_Tuple2(0, 0);
 	} else {
 		var cs = A2(
 			elm$core$List$map,
@@ -5969,12 +6010,29 @@ var author$project$Main$stat = function (clicks) {
 					elm$core$List$drop,
 					elm$core$List$length(cs) - 1,
 					cs)));
-		var qps = elm$core$Basics$round(
-			(60000.0 / delta) * (elm$core$List$length(cs) - 1));
-		return 'Total: ' + (elm$core$String$fromInt(
-			elm$core$List$length(cs)) + (', per minute: ' + elm$core$String$fromInt(qps)));
+		return _Utils_Tuple2(
+			elm$core$List$length(cs),
+			elm$core$Basics$round(
+				(60000.0 / delta) * (elm$core$List$length(cs) - 1)));
 	}
 };
+var author$project$Main$strLevel = function (lang) {
+	if (lang.$ === 'LEngish') {
+		return 'Level';
+	} else {
+		return '关卡';
+	}
+};
+var author$project$Main$strStat = F2(
+	function (lang, _n0) {
+		var total = _n0.a;
+		var qps = _n0.b;
+		if (lang.$ === 'LEngish') {
+			return 'Total: ' + (elm$core$String$fromInt(total) + (', per minute: ' + elm$core$String$fromInt(qps)));
+		} else {
+			return '共：' + (elm$core$String$fromInt(total) + ('，每分钟：' + elm$core$String$fromInt(qps)));
+		}
+	});
 var elm$core$List$sortBy = _List_sortBy;
 var elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
@@ -6145,49 +6203,6 @@ var author$project$Main$worst = function (clicks) {
 	}
 };
 var elm$html$Html$br = _VirtualDom_node('br');
-var elm$html$Html$input = _VirtualDom_node('input');
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
-var elm$html$Html$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 'MayStopPropagation', a: a};
-};
-var elm$html$Html$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
-	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
-var elm$json$Json$Decode$string = _Json_decodeString;
-var elm$html$Html$Events$targetValue = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	elm$json$Json$Decode$string);
-var elm$html$Html$Events$onInput = function (tagger) {
-	return A2(
-		elm$html$Html$Events$stopPropagationOn,
-		'input',
-		A2(
-			elm$json$Json$Decode$map,
-			elm$html$Html$Events$alwaysStop,
-			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
-};
 var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$div,
@@ -6201,17 +6216,7 @@ var author$project$Main$view = function (model) {
 						[
 							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
 						]),
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$input,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$placeholder('Level'),
-									elm$html$Html$Events$onInput(author$project$Main$Change)
-								]),
-							_List_Nil)
-						])),
+					author$project$Main$levelButtons),
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(
@@ -6222,7 +6227,7 @@ var author$project$Main$view = function (model) {
 					_List_fromArray(
 						[
 							elm$html$Html$text(
-							'Level ' + (elm$core$String$fromInt(model.level) + (': ' + author$project$Main$levelDescription(model.level))))
+							author$project$Main$strLevel(model.lang) + (' ' + (elm$core$String$fromInt(model.level) + (': ' + A2(author$project$Main$levelDescription, model.lang, model.level)))))
 						])),
 					A2(
 					elm$html$Html$div,
@@ -6254,7 +6259,10 @@ var author$project$Main$view = function (model) {
 					_List_fromArray(
 						[
 							elm$html$Html$text(
-							author$project$Main$stat(model.clicks))
+							A2(
+								author$project$Main$strStat,
+								model.lang,
+								author$project$Main$stat(model.clicks)))
 						])),
 					A2(elm$html$Html$br, _List_Nil, _List_Nil)
 				]),
@@ -6366,6 +6374,7 @@ var elm$core$String$left = F2(
 		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
 	});
 var elm$core$String$contains = _String_contains;
+var elm$core$String$toInt = _String_toInt;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
 		return {fragment: fragment, host: host, path: path, port_: port_, protocol: protocol, query: query};
