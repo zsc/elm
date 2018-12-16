@@ -210,8 +210,8 @@ levelButtons = List.map (\l -> button [onClick (Change l)] [div [style "font-siz
 
 view : Model -> Html Msg
 view model =
-  div [style "font-size" "32px"]
-    ([div [style "text-align" "center", style "font-size" "32px"] levelButtons
+  div []
+    ([div [style "text-align" "center", style "height" "48px"] levelButtons
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
     , div [style "font-size" "64px", style "text-align" "center"] 
