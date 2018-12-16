@@ -204,9 +204,9 @@ strLevel lang = case lang of
   LEngish -> "Level"
   LChinese -> "关卡"
 
-buttonN = button [ onClick Roll ] [div [style "font-size" "32px"] [text "Next" ]]
+buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
 
-levelButtons = List.map (\l -> button [onClick (Change l)] [div [style "font-size" "32px"] [text (String.fromInt l) ]]) [1, 2, 3, 4]
+levelButtons = List.map (\l -> button [onClick (Change l), style "font-size" "32px"] [text (String.fromInt l) ]) [1, 2, 3, 4]
 
 view : Model -> Html Msg
 view model =
