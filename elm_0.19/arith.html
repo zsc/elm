@@ -5418,6 +5418,10 @@ var author$project$Main$subscriptions = function (model) {
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
+var author$project$Main$PlusSqrt = F2(
+	function (a, b) {
+		return {$: 'PlusSqrt', a: a, b: b};
+	});
 var elm$core$Basics$pow = _Basics_pow;
 var elm$core$Basics$round = _Basics_round;
 var elm$core$Basics$sqrt = _Basics_sqrt;
@@ -5448,10 +5452,15 @@ var author$project$Main$eval = function (expr) {
 			var b = expr.b;
 			return elm$core$Basics$round(
 				A2(elm$core$Basics$logBase, a, b));
-		default:
+		case 'Sqrt':
 			var a = expr.a;
 			return elm$core$Basics$round(
 				elm$core$Basics$sqrt(a));
+		default:
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$Basics$round(
+				elm$core$Basics$sqrt(a) + elm$core$Basics$sqrt(b));
 	}
 };
 var elm$random$Random$Generator = function (a) {
@@ -5512,8 +5521,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 72, column: 12},
-						end: {line: 72, column: 22}
+						start: {line: 80, column: 12},
+						end: {line: 80, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -5773,12 +5782,11 @@ var author$project$Main$rand = function (level) {
 		case 5:
 			return author$project$Main$genLevel5;
 		default:
-			return _Debug_todo(
-				'Main',
-				{
-					start: {line: 146, column: 12},
-					end: {line: 146, column: 22}
-				})('Unknown level');
+			return A3(
+				elm$random$Random$map2,
+				author$project$Main$PlusSqrt,
+				A2(elm$random$Random$int, 0, 9),
+				A2(elm$random$Random$int, 0, 9));
 	}
 };
 var elm$random$Random$Generate = function (a) {
@@ -5962,7 +5970,7 @@ var author$project$Main$levelButtons = function (curLevel) {
 					]));
 		},
 		_List_fromArray(
-			[1, 2, 3, 4, 5]));
+			[1, 2, 3, 4, 5, 6]));
 };
 var author$project$Main$levelDescription = F2(
 	function (lang, level) {
@@ -5998,12 +6006,11 @@ var author$project$Main$levelDescription = F2(
 					return '百以下加减乘除、十以下指数对数和二十以下平方根';
 				}
 			default:
-				return _Debug_todo(
-					'Main',
-					{
-						start: {line: 107, column: 8},
-						end: {line: 107, column: 18}
-					})('Unknown level');
+				if (lang.$ === 'LEngish') {
+					return 'Experimental';
+				} else {
+					return '表示成sqrt(a) + sqrt(b)';
+				}
 		}
 	});
 var elm$core$List$drop = F2(
@@ -6122,9 +6129,13 @@ var author$project$Main$repr = function (expr) {
 			var a = expr.a;
 			var b = expr.b;
 			return 'log(' + (elm$core$String$fromInt(a) + (', ' + (elm$core$String$fromInt(b) + ')')));
+		case 'Sqrt':
+			var a = expr.a;
+			return 'sqrt(' + (elm$core$String$fromInt(a) + ')');
 		default:
 			var a = expr.a;
-			return '√' + elm$core$String$fromInt(a);
+			var b = expr.b;
+			return 'sqrt(' + (elm$core$String$fromInt(a + b) + (' + ' + ('sqrt(' + (elm$core$String$fromInt((4 * a) * b) + '))'))));
 	}
 };
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -6232,6 +6243,16 @@ var author$project$Main$textExpr = function (expr) {
 						elm$html$Html$text(
 						author$project$Main$repr(expr))
 					]));
+	}
+};
+var author$project$Main$reprEval = function (e) {
+	if (e.$ === 'PlusSqrt') {
+		var a = e.a;
+		var b = e.b;
+		return author$project$Main$repr(e) + (' = sqrt(' + (elm$core$String$fromInt(a) + (') + sqrt(' + (elm$core$String$fromInt(b) + ')'))));
+	} else {
+		return author$project$Main$repr(e) + (' = ' + elm$core$String$fromInt(
+			author$project$Main$eval(e)));
 	}
 };
 var elm$core$List$sortBy = _List_sortBy;
@@ -6398,7 +6419,7 @@ var author$project$Main$worst = function (clicks) {
 				var b = _n0.b;
 				return elm$html$Html$text(
 					elm$core$String$fromInt(
-						elm$core$Basics$round(b / 100.0)) + (', ' + author$project$Main$repr(a)));
+						elm$core$Basics$round(b / 100.0)) + (', ' + author$project$Main$reprEval(a)));
 			},
 			top);
 	}

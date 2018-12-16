@@ -32,6 +32,7 @@ type Expr
  | Exp Int Int
  | Log Int Int
  | Sqrt Int
+ | PlusSqrt Int Int
 
 eval : Expr -> Int
 eval expr = case expr of
@@ -42,6 +43,12 @@ eval expr = case expr of
     Exp a b -> a ^ b
     Log a b -> round (logBase (toFloat a) (toFloat b))
     Sqrt a -> round (sqrt (toFloat a))
+    PlusSqrt a b -> round (sqrt (toFloat a) + sqrt (toFloat b))
+
+reprEval : Expr -> String
+reprEval e = case e of
+    PlusSqrt a b -> repr e ++ " = sqrt(" ++ String.fromInt a ++ ") + sqrt(" ++ String.fromInt b ++ ")"
+    _ -> repr e ++ " = " ++ String.fromInt (eval e)
 
 repr : Expr -> String
 repr expr = case expr of
@@ -51,7 +58,8 @@ repr expr = case expr of
     Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
     Exp a b -> String.fromInt a ++ " ^ " ++ String.fromInt b
     Log a b -> "log(" ++ String.fromInt a ++ ", " ++ String.fromInt b ++ ")"
-    Sqrt a -> "√" ++ String.fromInt a
+    Sqrt a -> "sqrt(" ++ String.fromInt a ++ ")"
+    PlusSqrt a b -> "sqrt(" ++ String.fromInt (a + b) ++ " + " ++ "sqrt(" ++ String.fromInt (4 * a * b) ++ "))"
 
 textExpr expr = case expr of
     Log a b -> div [style "font-size" "96px", style "text-align" "center"] 
@@ -104,7 +112,9 @@ levelDescription lang level = case level of
   5 -> case lang of
       LEngish -> "Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20."
       LChinese -> "百以下加减乘除、十以下指数对数和二十以下平方根"
-  _ -> Debug.todo "Unknown level"
+  _ -> case lang of
+      LEngish -> "Experimental"
+      LChinese -> "表示成sqrt(a) + sqrt(b)"
 
 genLevel2 : Random.Generator Expr
 genLevel2 = filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
@@ -143,7 +153,7 @@ rand level =
       3 -> genLevel3
       4 -> genLevel4
       5 -> genLevel5
-      _ -> Debug.todo "Unknown level"
+      _ -> Random.map2 PlusSqrt (Random.int 0 9) (Random.int 0 9)
 
 type alias Click = 
   { time : Time.Posix
@@ -175,7 +185,7 @@ worst clicks =
       let except_last = List.take (List.length clicks - 1) clicks in
       let diffs = List.map2 (\a b -> (a.expr, Time.posixToMillis a.time - Time.posixToMillis b.time)) except_last (List.drop 1 clicks) in
       let top = List.take 3 (List.reverse (List.sortBy (\(a,b) -> b) diffs)) in
-      (List.map (\(a, b) -> text (String.fromInt (round (toFloat b / 100.0)) ++ ", " ++ repr a)) top)
+      (List.map (\(a, b) -> text (String.fromInt (round (toFloat b / 100.0)) ++ ", " ++ reprEval a)) top)
 
 stat : List Click -> (Int, Int)
 stat clicks =
@@ -244,7 +254,7 @@ buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
 levelButtons curLevel = List.map 
   (\l -> button ([onClick (Change l), style "font-size" "32px"] ++ (if curLevel == l then [style "font-weight" "bold"] else []))
                 [text (String.fromInt l)]) 
-  [1, 2, 3, 4, 5]
+  [1, 2, 3, 4, 5, 6]
 
 view : Model -> Html Msg
 view model =
