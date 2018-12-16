@@ -55,14 +55,6 @@ toExpr op1 op2 op =
 
 defaultLevel = 1
 
-filterDiv : Random.Generator Expr -> Random.Generator Expr
-filterDiv g =
-   g |> Random.andThen 
-        (\expr -> case expr of
-             Div op1 op2 -> if (op2 == 0 || (modBy op2 op1 /= 0)) then (filterDiv g) else Random.constant expr
-             _ -> Random.constant expr
-        )
-
 filterNegative : Random.Generator Expr -> Random.Generator Expr
 filterNegative g =
    g |> Random.andThen 
@@ -83,9 +75,11 @@ genLevel2 = filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 9
 
 genLevel3 : Random.Generator Expr
 genLevel3 =
-  Random.int 0 1 |> Random.andThen
-      (\i -> if i == 0 then filterDiv (filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 2 3)))
-             else genLevel2)
+  Random.int 0 2 |> Random.andThen
+      (\i -> case i of
+           0 -> Random.map2 (\a b -> Div (a * b) a) (Random.int 1 9) (Random.int 0 9)
+           1 -> Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.constant 2)
+           _ -> genLevel2)
 
 rand : Int -> Random.Generator Expr
 rand level =

@@ -5580,35 +5580,48 @@ var author$project$Main$genLevel2 = author$project$Main$filterNegative(
 		A2(elm$random$Random$int, 0, 99),
 		A2(elm$random$Random$int, 0, 99),
 		A2(elm$random$Random$int, 0, 1)));
-var elm$core$Basics$modBy = _Basics_modBy;
-var elm$core$Basics$neq = _Utils_notEqual;
-var author$project$Main$filterDiv = function (g) {
-	return A2(
-		elm$random$Random$andThen,
-		function (expr) {
-			if (expr.$ === 'Div') {
-				var op1 = expr.a;
-				var op2 = expr.b;
-				return ((!op2) || A2(elm$core$Basics$modBy, op2, op1)) ? author$project$Main$filterDiv(g) : elm$random$Random$constant(expr);
-			} else {
-				return elm$random$Random$constant(expr);
-			}
-		},
-		g);
-};
+var elm$random$Random$map2 = F3(
+	function (func, _n0, _n1) {
+		var genA = _n0.a;
+		var genB = _n1.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n2 = genA(seed0);
+				var a = _n2.a;
+				var seed1 = _n2.b;
+				var _n3 = genB(seed1);
+				var b = _n3.a;
+				var seed2 = _n3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
 var author$project$Main$genLevel3 = A2(
 	elm$random$Random$andThen,
 	function (i) {
-		return (!i) ? author$project$Main$filterDiv(
-			author$project$Main$filterNegative(
-				A4(
+		switch (i) {
+			case 0:
+				return A3(
+					elm$random$Random$map2,
+					F2(
+						function (a, b) {
+							return A2(author$project$Main$Div, a * b, a);
+						}),
+					A2(elm$random$Random$int, 1, 9),
+					A2(elm$random$Random$int, 0, 9));
+			case 1:
+				return A4(
 					elm$random$Random$map3,
 					author$project$Main$toExpr,
 					A2(elm$random$Random$int, 0, 9),
 					A2(elm$random$Random$int, 0, 9),
-					A2(elm$random$Random$int, 2, 3)))) : author$project$Main$genLevel2;
+					elm$random$Random$constant(2));
+			default:
+				return author$project$Main$genLevel2;
+		}
 	},
-	A2(elm$random$Random$int, 0, 1));
+	A2(elm$random$Random$int, 0, 2));
 var author$project$Main$rand = function (level) {
 	switch (level) {
 		case 1:
@@ -5627,8 +5640,8 @@ var author$project$Main$rand = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 96, column: 12},
-					end: {line: 96, column: 22}
+					start: {line: 90, column: 12},
+					end: {line: 90, column: 22}
 				})('Unknown level');
 	}
 };
@@ -5839,8 +5852,8 @@ var author$project$Main$levelDescription = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 79, column: 8},
-					end: {line: 79, column: 18}
+					start: {line: 71, column: 8},
+					end: {line: 71, column: 18}
 				})('Unknown level');
 	}
 };
