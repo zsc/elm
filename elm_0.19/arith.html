@@ -6540,19 +6540,43 @@ var author$project$Main$view = function (model) {
 							author$project$Main$strWorst(model.lang))
 						]))
 				]),
-			A2(
-				elm$core$List$map,
-				function (x) {
-					return A2(
+			_Utils_ap(
+				A2(
+					elm$core$List$map,
+					function (x) {
+						return A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+								]),
+							_List_fromArray(
+								[x]));
+					},
+					author$project$Main$worst(model.clicks)),
+				_List_fromArray(
+					[
+						A2(
 						elm$html$Html$div,
 						_List_fromArray(
 							[
-								A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+								A2(elm$html$Html$Attributes$style, 'text-align', 'right')
 							]),
 						_List_fromArray(
-							[x]));
-				},
-				author$project$Main$worst(model.clicks))));
+							[
+								A2(
+								elm$html$Html$a,
+								_List_fromArray(
+									[
+										A2(elm$html$Html$Attributes$style, 'font-size', '24px'),
+										elm$html$Html$Attributes$href('https://github.com/zsc/elm/tree/master/elm_0.19')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('GitHub')
+									]))
+							]))
+					]))));
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};

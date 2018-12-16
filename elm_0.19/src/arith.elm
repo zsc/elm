@@ -269,4 +269,7 @@ view model =
     , div [style "text-align" "center"] [buttonN]
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
     , div [style "font-size" "24px"] [text (strWorst model.lang)]
-    ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)))
+    ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)) ++ [
+      div [style "text-align" "right"] 
+          [a [style "font-size" "24px", href "https://github.com/zsc/elm/tree/master/elm_0.19"] [text "GitHub"]]]
+    )
