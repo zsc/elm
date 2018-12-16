@@ -223,7 +223,8 @@ view model =
     , div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
-    , div [style "font-size" "64px", style "text-align" "center"] 
+    , div [style "font-size" "32px"] [text "　"]
+    , div [style "font-size" "96px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center"] [buttonN]
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
