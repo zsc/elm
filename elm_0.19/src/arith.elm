@@ -204,19 +204,19 @@ strLevel lang = case lang of
   LEngish -> "Level"
   LChinese -> "关卡"
 
-buttonN = button [ onClick Roll ] [div [style "font-size" "32px", style "height" "48px"] [text "Next" ]]
+buttonN = button [ onClick Roll ] [div [style "font-size" "32px"] [text "Next" ]]
 
-levelButtons = List.map (\l -> button [onClick (Change l)] [div [style "font-size" "32px", style "height" "48px"] [text (String.fromInt l) ]]) [1, 2, 3, 4]
+levelButtons = List.map (\l -> button [onClick (Change l)] [div [style "font-size" "32px"] [text (String.fromInt l) ]]) [1, 2, 3, 4]
 
 view : Model -> Html Msg
 view model =
   div []
-    ([div [style "text-align" "center", style "height" "48px"] levelButtons
+    ([div [style "text-align" "center"] levelButtons
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
     , div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
-    , div [style "text-align" "center", style "height" "48px"] [buttonN]
+    , div [style "text-align" "center"] [buttonN]
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
     , br [] []
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)))
