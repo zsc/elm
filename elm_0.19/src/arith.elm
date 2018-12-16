@@ -2,7 +2,7 @@ import Array
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
-import Html.Attributes exposing ( style )
+import Html.Attributes exposing ( style, placeholder )
 import List
 import Maybe
 import Random
@@ -38,20 +38,32 @@ repr expr = case expr of
     Plus a b -> String.fromInt a ++ " + " ++ String.fromInt b
     Minus a b -> String.fromInt a ++ " - " ++ String.fromInt b
 
-func : Int -> Int -> Int -> Expr
-func op1 op2 op =
+toExpr : Int -> Int -> Int -> Expr
+toExpr op1 op2 op =
     if op == 0 then Plus op1 op2 else Minus op1 op2
 
-rand : Random.Generator Expr
-rand =
-    Random.map3 func (Random.int 0 9) (Random.int 0 9) (Random.int 0 1)
-        |> Random.andThen
-            (\expr ->
-                 if eval expr < 0 then
-                     rand
-                 else
-                     Random.uniform expr []
-            )
+defaultLevel = 1
+
+filterZero : Random.Generator Expr -> Random.Generator Expr
+filterZero g =
+   g |> Random.andThen 
+        (\expr ->
+             if eval expr < 0 then g
+             else Random.uniform expr []
+        )
+
+levelDescription : Int -> String
+levelDescription level = case level of
+  1 -> "Plus/minus under 10."
+  2 -> "Plus/minus under 100."
+  _ -> Debug.todo "Unknown level"
+
+rand : Int -> Random.Generator Expr
+rand level =
+    case level of
+      1 -> filterZero (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 1))
+      2 -> filterZero (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
+      _ -> Debug.todo "Unknown level"
 
 type alias Click = 
   { time : Time.Posix
@@ -63,12 +75,13 @@ type alias Model =
   { dieFace : Expr
   , time : Time.Posix
   , clicks : List Click
+  , level : Int
   }
 
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = []}
+  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel}
   , Cmd.none
   )
 
@@ -95,6 +108,7 @@ type Msg
   = Roll
   | NewFace Expr
   | Tick Time.Posix
+  | Change String
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -102,7 +116,7 @@ update msg model =
   case msg of
     Roll ->
       ( { model | clicks = {time = model.time, expr = model.dieFace} :: model.clicks}
-      , Random.generate NewFace rand
+      , Random.generate NewFace (rand model.level)
       )
 
     NewFace newFace ->
@@ -115,6 +129,10 @@ update msg model =
       , Cmd.none
       )
 
+    Change level ->
+      ( { model | level = Maybe.withDefault defaultLevel (String.toInt level) }
+      , Cmd.none
+      )
 
 -- SUBSCRIPTIONS
 
@@ -131,7 +149,9 @@ buttonN = button [ onClick Roll ] [div [style "font-size" "32px", style "height"
 view : Model -> Html Msg
 view model =
   div []
-    ([ div [style "font-size" "64px", style "text-align" "center"] 
+    ([input [ placeholder "Level", onInput Change ] []
+    , div [style "font-size" "32px"] [ text ("Level " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
+    , div [style "font-size" "64px", style "text-align" "center"] 
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center", style "height" "48px"] [buttonN]
     , div [style "font-size" "32px"] [ text (stat model.clicks)]
