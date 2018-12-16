@@ -5419,6 +5419,8 @@ var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
 var elm$core$Basics$pow = _Basics_pow;
+var elm$core$Basics$round = _Basics_round;
+var elm$core$Basics$sqrt = _Basics_sqrt;
 var author$project$Main$eval = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
@@ -5437,10 +5439,19 @@ var author$project$Main$eval = function (expr) {
 			var a = expr.a;
 			var b = expr.b;
 			return (a / b) | 0;
-		default:
+		case 'Exp':
 			var a = expr.a;
 			var b = expr.b;
 			return A2(elm$core$Basics$pow, a, b);
+		case 'Log':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$Basics$round(
+				A2(elm$core$Basics$logBase, a, b));
+		default:
+			var a = expr.a;
+			return elm$core$Basics$round(
+				elm$core$Basics$sqrt(a));
 	}
 };
 var elm$random$Random$Generator = function (a) {
@@ -5501,8 +5512,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 57, column: 12},
-						end: {line: 57, column: 22}
+						start: {line: 63, column: 12},
+						end: {line: 63, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -5656,6 +5667,61 @@ var author$project$Main$genLevel4 = A2(
 		}
 	},
 	A2(elm$random$Random$int, 0, 3));
+var author$project$Main$Log = F2(
+	function (a, b) {
+		return {$: 'Log', a: a, b: b};
+	});
+var author$project$Main$Sqrt = function (a) {
+	return {$: 'Sqrt', a: a};
+};
+var elm$random$Random$map = F2(
+	function (func, _n0) {
+		var genA = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n1 = genA(seed0);
+				var a = _n1.a;
+				var seed1 = _n1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var author$project$Main$genLevel5 = A2(
+	elm$random$Random$andThen,
+	function (i) {
+		switch (i) {
+			case 0:
+				return author$project$Main$filterTooLarge(
+					A3(
+						elm$random$Random$map2,
+						author$project$Main$Exp,
+						A2(elm$random$Random$int, 0, 9),
+						A2(elm$random$Random$int, 0, 9)));
+			case 1:
+				return A3(
+					elm$random$Random$map2,
+					F2(
+						function (a, b) {
+							return A2(
+								author$project$Main$Log,
+								a,
+								A2(elm$core$Basics$pow, a, b));
+						}),
+					A2(elm$random$Random$int, 1, 9),
+					A2(elm$random$Random$int, 0, 9));
+			case 2:
+				return A2(
+					elm$random$Random$map,
+					function (a) {
+						return author$project$Main$Sqrt(a * a);
+					},
+					A2(elm$random$Random$int, 1, 19));
+			default:
+				return author$project$Main$genLevel3;
+		}
+	},
+	A2(elm$random$Random$int, 0, 5));
 var author$project$Main$rand = function (level) {
 	switch (level) {
 		case 1:
@@ -5672,12 +5738,14 @@ var author$project$Main$rand = function (level) {
 			return author$project$Main$genLevel3;
 		case 4:
 			return author$project$Main$genLevel4;
+		case 5:
+			return author$project$Main$genLevel5;
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 115, column: 12},
-					end: {line: 115, column: 22}
+					start: {line: 133, column: 12},
+					end: {line: 133, column: 22}
 				})('Unknown level');
 	}
 };
@@ -5731,19 +5799,6 @@ var elm$random$Random$onEffects = F3(
 var elm$random$Random$onSelfMsg = F3(
 	function (_n0, _n1, seed) {
 		return elm$core$Task$succeed(seed);
-	});
-var elm$random$Random$map = F2(
-	function (func, _n0) {
-		var genA = _n0.a;
-		return elm$random$Random$Generator(
-			function (seed0) {
-				var _n1 = genA(seed0);
-				var a = _n1.a;
-				var seed1 = _n1.b;
-				return _Utils_Tuple2(
-					func(a),
-					seed1);
-			});
 	});
 var elm$random$Random$cmdMap = F2(
 	function (func, _n0) {
@@ -5875,7 +5930,7 @@ var author$project$Main$levelButtons = function (curLevel) {
 					]));
 		},
 		_List_fromArray(
-			[1, 2, 3, 4]));
+			[1, 2, 3, 4, 5]));
 };
 var author$project$Main$levelDescription = F2(
 	function (lang, level) {
@@ -5904,12 +5959,18 @@ var author$project$Main$levelDescription = F2(
 				} else {
 					return '百以下加减乘除和十以下指数';
 				}
+			case 5:
+				if (lang.$ === 'LEngish') {
+					return 'Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20.';
+				} else {
+					return '百以下加减乘除、十以下指数对数和二十以下平方根';
+				}
 			default:
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 89, column: 8},
-						end: {line: 89, column: 18}
+						start: {line: 98, column: 8},
+						end: {line: 98, column: 18}
 					})('Unknown level');
 		}
 	});
@@ -5931,13 +5992,19 @@ var author$project$Main$repr = function (expr) {
 			var a = expr.a;
 			var b = expr.b;
 			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
-		default:
+		case 'Exp':
 			var a = expr.a;
 			var b = expr.b;
 			return elm$core$String$fromInt(a) + (' ^ ' + elm$core$String$fromInt(b));
+		case 'Log':
+			var a = expr.a;
+			var b = expr.b;
+			return 'log(' + (elm$core$String$fromInt(a) + (', ' + (elm$core$String$fromInt(b) + ')')));
+		default:
+			var a = expr.a;
+			return '√' + elm$core$String$fromInt(a);
 	}
 };
-var elm$core$Basics$round = _Basics_round;
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:

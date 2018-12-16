@@ -30,6 +30,8 @@ type Expr
  | Times Int Int
  | Div Int Int
  | Exp Int Int
+ | Log Int Int
+ | Sqrt Int
  
 eval : Expr -> Int
 eval expr = case expr of
@@ -38,6 +40,8 @@ eval expr = case expr of
     Times a b -> a * b
     Div a b -> a // b
     Exp a b -> a ^ b
+    Log a b -> round (logBase (toFloat a) (toFloat b))
+    Sqrt a -> round (sqrt (toFloat a))
 
 repr : Expr -> String
 repr expr = case expr of
@@ -46,6 +50,8 @@ repr expr = case expr of
     Times a b -> String.fromInt a ++ " × " ++ String.fromInt b
     Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
     Exp a b -> String.fromInt a ++ " ^ " ++ String.fromInt b
+    Log a b -> "log(" ++ String.fromInt a ++ ", " ++ String.fromInt b ++ ")"
+    Sqrt a -> "√" ++ String.fromInt a
 
 toExpr : Int -> Int -> Int -> Expr
 toExpr op1 op2 op =
@@ -86,6 +92,9 @@ levelDescription lang level = case level of
   4 -> case lang of
       LEngish -> "Plus/minus/time/divsion under 100 and exponentation under 10."
       LChinese -> "百以下加减乘除和十以下指数"
+  5 -> case lang of
+      LEngish -> "Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20."
+      LChinese -> "百以下加减乘除、十以下指数对数和二十以下平方根"
   _ -> Debug.todo "Unknown level"
 
 genLevel2 : Random.Generator Expr
@@ -105,6 +114,14 @@ genLevel4 =
            0 -> filterTooLarge (Random.map2 Exp (Random.int 0 9) (Random.int 0 9))
            _ -> genLevel3)
 
+genLevel5 =
+  Random.int 0 5 |> Random.andThen
+      (\i -> case i of
+           0 -> filterTooLarge (Random.map2 Exp (Random.int 0 9) (Random.int 0 9))
+           1 -> Random.map2 (\a b -> Log a (a ^ b)) (Random.int 1 9) (Random.int 0 9)
+           2 -> Random.map (\a -> Sqrt (a * a)) (Random.int 1 19)
+           _ -> genLevel3)
+
 rand : Int -> Random.Generator Expr
 rand level =
     case level of
@@ -112,6 +129,7 @@ rand level =
       2 -> genLevel2
       3 -> genLevel3
       4 -> genLevel4
+      5 -> genLevel5
       _ -> Debug.todo "Unknown level"
 
 type alias Click = 
@@ -213,7 +231,7 @@ buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
 levelButtons curLevel = List.map 
   (\l -> button ([onClick (Change l), style "font-size" "32px"] ++ (if curLevel == l then [style "font-weight" "bold"] else []))
                 [text (String.fromInt l)]) 
-  [1, 2, 3, 4]
+  [1, 2, 3, 4, 5]
 
 view : Model -> Html Msg
 view model =
