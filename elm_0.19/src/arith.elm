@@ -59,8 +59,8 @@ filterDiv : Random.Generator Expr -> Random.Generator Expr
 filterDiv g =
    g |> Random.andThen 
         (\expr -> case expr of
-             Div op1 op2 -> if (op2 == 0 || (modBy op2 op1 /= 0)) then (filterDiv g) else Random.uniform expr []
-             _ -> Random.uniform expr []
+             Div op1 op2 -> if (op2 == 0 || (modBy op2 op1 /= 0)) then (filterDiv g) else Random.constant expr
+             _ -> Random.constant expr
         )
 
 filterNegative : Random.Generator Expr -> Random.Generator Expr
@@ -68,22 +68,31 @@ filterNegative g =
    g |> Random.andThen 
         (\expr ->
              if eval expr < 0 then filterNegative g
-             else Random.uniform expr []
+             else Random.constant expr
         )
 
 levelDescription : Int -> String
 levelDescription level = case level of
   1 -> "Plus/minus under 10."
   2 -> "Plus/minus under 100."
-  3 -> "Plus/minus/times/divsion under 10."
+  3 -> "Plus/minus under 100 and times/divsion under 10."
   _ -> Debug.todo "Unknown level"
+
+genLevel2 : Random.Generator Expr
+genLevel2 = filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
+
+genLevel3 : Random.Generator Expr
+genLevel3 =
+  Random.int 0 1 |> Random.andThen
+      (\i -> if i == 0 then filterDiv (filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 2 3)))
+             else genLevel2)
 
 rand : Int -> Random.Generator Expr
 rand level =
     case level of
       1 -> filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 1))
-      2 -> filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
-      3 -> filterDiv (filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 3)))
+      2 -> genLevel2
+      3 -> genLevel3
       _ -> Debug.todo "Unknown level"
 
 type alias Click = 

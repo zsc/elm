@@ -5416,144 +5416,6 @@ var author$project$Main$subscriptions = function (model) {
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
-var elm$core$Basics$modBy = _Basics_modBy;
-var elm$core$Basics$neq = _Utils_notEqual;
-var elm$random$Random$Generator = function (a) {
-	return {$: 'Generator', a: a};
-};
-var elm$random$Random$andThen = F2(
-	function (callback, _n0) {
-		var genA = _n0.a;
-		return elm$random$Random$Generator(
-			function (seed) {
-				var _n1 = genA(seed);
-				var result = _n1.a;
-				var newSeed = _n1.b;
-				var _n2 = callback(result);
-				var genB = _n2.a;
-				return genB(newSeed);
-			});
-	});
-var elm$random$Random$addOne = function (value) {
-	return _Utils_Tuple2(1, value);
-};
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var elm$core$Basics$abs = function (n) {
-	return (n < 0) ? (-n) : n;
-};
-var elm$core$List$sum = function (numbers) {
-	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
-};
-var elm$core$Bitwise$and = _Bitwise_and;
-var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 'Seed', a: a, b: b};
-	});
-var elm$random$Random$next = function (_n0) {
-	var state0 = _n0.a;
-	var incr = _n0.b;
-	return A2(elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var elm$core$Bitwise$xor = _Bitwise_xor;
-var elm$random$Random$peel = function (_n0) {
-	var state = _n0.a;
-	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
-	return ((word >>> 22) ^ word) >>> 0;
-};
-var elm$random$Random$float = F2(
-	function (a, b) {
-		return elm$random$Random$Generator(
-			function (seed0) {
-				var seed1 = elm$random$Random$next(seed0);
-				var range = elm$core$Basics$abs(b - a);
-				var n1 = elm$random$Random$peel(seed1);
-				var n0 = elm$random$Random$peel(seed0);
-				var lo = (134217727 & n1) * 1.0;
-				var hi = (67108863 & n0) * 1.0;
-				var val = ((hi * 1.34217728e8) + lo) / 9.007199254740992e15;
-				var scaled = (val * range) + a;
-				return _Utils_Tuple2(
-					scaled,
-					elm$random$Random$next(seed1));
-			});
-	});
-var elm$random$Random$getByWeight = F3(
-	function (_n0, others, countdown) {
-		getByWeight:
-		while (true) {
-			var weight = _n0.a;
-			var value = _n0.b;
-			if (!others.b) {
-				return value;
-			} else {
-				var second = others.a;
-				var otherOthers = others.b;
-				if (_Utils_cmp(
-					countdown,
-					elm$core$Basics$abs(weight)) < 1) {
-					return value;
-				} else {
-					var $temp$_n0 = second,
-						$temp$others = otherOthers,
-						$temp$countdown = countdown - elm$core$Basics$abs(weight);
-					_n0 = $temp$_n0;
-					others = $temp$others;
-					countdown = $temp$countdown;
-					continue getByWeight;
-				}
-			}
-		}
-	});
-var elm$random$Random$map = F2(
-	function (func, _n0) {
-		var genA = _n0.a;
-		return elm$random$Random$Generator(
-			function (seed0) {
-				var _n1 = genA(seed0);
-				var a = _n1.a;
-				var seed1 = _n1.b;
-				return _Utils_Tuple2(
-					func(a),
-					seed1);
-			});
-	});
-var elm$random$Random$weighted = F2(
-	function (first, others) {
-		var normalize = function (_n0) {
-			var weight = _n0.a;
-			return elm$core$Basics$abs(weight);
-		};
-		var total = normalize(first) + elm$core$List$sum(
-			A2(elm$core$List$map, normalize, others));
-		return A2(
-			elm$random$Random$map,
-			A2(elm$random$Random$getByWeight, first, others),
-			A2(elm$random$Random$float, 0, total));
-	});
-var elm$random$Random$uniform = F2(
-	function (value, valueList) {
-		return A2(
-			elm$random$Random$weighted,
-			elm$random$Random$addOne(value),
-			A2(elm$core$List$map, elm$random$Random$addOne, valueList));
-	});
-var author$project$Main$filterDiv = function (g) {
-	return A2(
-		elm$random$Random$andThen,
-		function (expr) {
-			if (expr.$ === 'Div') {
-				var op1 = expr.a;
-				var op2 = expr.b;
-				return ((!op2) || A2(elm$core$Basics$modBy, op2, op1)) ? author$project$Main$filterDiv(g) : A2(elm$random$Random$uniform, expr, _List_Nil);
-			} else {
-				return A2(elm$random$Random$uniform, expr, _List_Nil);
-			}
-		},
-		g);
-};
 var author$project$Main$eval = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
@@ -5574,11 +5436,33 @@ var author$project$Main$eval = function (expr) {
 			return (a / b) | 0;
 	}
 };
+var elm$random$Random$Generator = function (a) {
+	return {$: 'Generator', a: a};
+};
+var elm$random$Random$andThen = F2(
+	function (callback, _n0) {
+		var genA = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed) {
+				var _n1 = genA(seed);
+				var result = _n1.a;
+				var newSeed = _n1.b;
+				var _n2 = callback(result);
+				var genB = _n2.a;
+				return genB(newSeed);
+			});
+	});
+var elm$random$Random$constant = function (value) {
+	return elm$random$Random$Generator(
+		function (seed) {
+			return _Utils_Tuple2(value, seed);
+		});
+};
 var author$project$Main$filterNegative = function (g) {
 	return A2(
 		elm$random$Random$andThen,
 		function (expr) {
-			return (author$project$Main$eval(expr) < 0) ? author$project$Main$filterNegative(g) : A2(elm$random$Random$uniform, expr, _List_Nil);
+			return (author$project$Main$eval(expr) < 0) ? author$project$Main$filterNegative(g) : elm$random$Random$constant(expr);
 		},
 		g);
 };
@@ -5616,6 +5500,26 @@ var author$project$Main$toExpr = F3(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
 	});
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$core$Bitwise$and = _Bitwise_and;
+var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 'Seed', a: a, b: b};
+	});
+var elm$random$Random$next = function (_n0) {
+	var state0 = _n0.a;
+	var incr = _n0.b;
+	return A2(elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var elm$core$Bitwise$xor = _Bitwise_xor;
+var elm$random$Random$peel = function (_n0) {
+	var state = _n0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
 var elm$random$Random$int = F2(
 	function (a, b) {
 		return elm$random$Random$Generator(
@@ -5669,6 +5573,42 @@ var elm$random$Random$map3 = F4(
 					seed3);
 			});
 	});
+var author$project$Main$genLevel2 = author$project$Main$filterNegative(
+	A4(
+		elm$random$Random$map3,
+		author$project$Main$toExpr,
+		A2(elm$random$Random$int, 0, 99),
+		A2(elm$random$Random$int, 0, 99),
+		A2(elm$random$Random$int, 0, 1)));
+var elm$core$Basics$modBy = _Basics_modBy;
+var elm$core$Basics$neq = _Utils_notEqual;
+var author$project$Main$filterDiv = function (g) {
+	return A2(
+		elm$random$Random$andThen,
+		function (expr) {
+			if (expr.$ === 'Div') {
+				var op1 = expr.a;
+				var op2 = expr.b;
+				return ((!op2) || A2(elm$core$Basics$modBy, op2, op1)) ? author$project$Main$filterDiv(g) : elm$random$Random$constant(expr);
+			} else {
+				return elm$random$Random$constant(expr);
+			}
+		},
+		g);
+};
+var author$project$Main$genLevel3 = A2(
+	elm$random$Random$andThen,
+	function (i) {
+		return (!i) ? author$project$Main$filterDiv(
+			author$project$Main$filterNegative(
+				A4(
+					elm$random$Random$map3,
+					author$project$Main$toExpr,
+					A2(elm$random$Random$int, 0, 9),
+					A2(elm$random$Random$int, 0, 9),
+					A2(elm$random$Random$int, 2, 3)))) : author$project$Main$genLevel2;
+	},
+	A2(elm$random$Random$int, 0, 1));
 var author$project$Main$rand = function (level) {
 	switch (level) {
 		case 1:
@@ -5680,28 +5620,15 @@ var author$project$Main$rand = function (level) {
 					A2(elm$random$Random$int, 0, 9),
 					A2(elm$random$Random$int, 0, 1)));
 		case 2:
-			return author$project$Main$filterNegative(
-				A4(
-					elm$random$Random$map3,
-					author$project$Main$toExpr,
-					A2(elm$random$Random$int, 0, 99),
-					A2(elm$random$Random$int, 0, 99),
-					A2(elm$random$Random$int, 0, 1)));
+			return author$project$Main$genLevel2;
 		case 3:
-			return author$project$Main$filterDiv(
-				author$project$Main$filterNegative(
-					A4(
-						elm$random$Random$map3,
-						author$project$Main$toExpr,
-						A2(elm$random$Random$int, 0, 9),
-						A2(elm$random$Random$int, 0, 9),
-						A2(elm$random$Random$int, 0, 3))));
+			return author$project$Main$genLevel3;
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 87, column: 12},
-					end: {line: 87, column: 22}
+					start: {line: 96, column: 12},
+					end: {line: 96, column: 22}
 				})('Unknown level');
 	}
 };
@@ -5765,6 +5692,19 @@ var elm$random$Random$onEffects = F3(
 var elm$random$Random$onSelfMsg = F3(
 	function (_n0, _n1, seed) {
 		return elm$core$Task$succeed(seed);
+	});
+var elm$random$Random$map = F2(
+	function (func, _n0) {
+		var genA = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n1 = genA(seed0);
+				var a = _n1.a;
+				var seed1 = _n1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
 	});
 var elm$random$Random$cmdMap = F2(
 	function (func, _n0) {
@@ -5894,7 +5834,7 @@ var author$project$Main$levelDescription = function (level) {
 		case 2:
 			return 'Plus/minus under 100.';
 		case 3:
-			return 'Plus/minus/times/divsion under 10.';
+			return 'Plus/minus under 100 and times/divsion under 10.';
 		default:
 			return _Debug_todo(
 				'Main',
