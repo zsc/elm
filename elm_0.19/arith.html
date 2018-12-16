@@ -6190,8 +6190,23 @@ var author$project$Main$worst = function (clicks) {
 			top);
 	}
 };
+var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$br = _VirtualDom_node('br');
 var elm$html$Html$div = _VirtualDom_node('div');
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$div,
@@ -6199,6 +6214,36 @@ var author$project$Main$view = function (model) {
 		_Utils_ap(
 			_List_fromArray(
 				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'font-size', '24px'),
+									elm$html$Html$Attributes$href('https://zsc.github.io/637913017.jpg')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('打赏')
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('　')
+						])),
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(

@@ -2,7 +2,7 @@ import Array
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
-import Html.Attributes exposing ( style, placeholder )
+import Html.Attributes exposing ( style, placeholder, src, width, href )
 import List
 import Maybe
 import Random
@@ -214,7 +214,9 @@ levelButtons curLevel = List.map
 view : Model -> Html Msg
 view model =
   div []
-    ([div [style "text-align" "center"] (levelButtons model.level)
+    ([ div [style "text-align" "center"] [a [style "font-size" "24px", href "https://zsc.github.io/637913017.jpg"] [text "打赏"]]
+    , div [style "font-size" "32px"] [text "　"]
+    , div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
     , div [style "font-size" "64px", style "text-align" "center"] 
