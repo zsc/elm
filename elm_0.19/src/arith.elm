@@ -27,28 +27,47 @@ main =
 type Expr
  = Plus Int Int
  | Minus Int Int
+ | Times Int Int
+ | Div Int Int
  
 eval : Expr -> Int
 eval expr = case expr of
     Plus a b -> a + b
     Minus a b -> a - b
+    Times a b -> a * b
+    Div a b -> a // b
 
 repr : Expr -> String
 repr expr = case expr of
     Plus a b -> String.fromInt a ++ " + " ++ String.fromInt b
     Minus a b -> String.fromInt a ++ " - " ++ String.fromInt b
+    Times a b -> String.fromInt a ++ " × " ++ String.fromInt b
+    Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
 
 toExpr : Int -> Int -> Int -> Expr
 toExpr op1 op2 op =
-    if op == 0 then Plus op1 op2 else Minus op1 op2
+  case op of
+      0 -> Plus op1 op2
+      1 -> Minus op1 op2
+      2 -> Times op1 op2
+      3 -> Div op1 op2
+      _ -> Debug.todo ("Unknown operator: " ++ String.fromInt op)
 
 defaultLevel = 1
 
-filterZero : Random.Generator Expr -> Random.Generator Expr
-filterZero g =
+filterDiv : Random.Generator Expr -> Random.Generator Expr
+filterDiv g =
+   g |> Random.andThen 
+        (\expr -> case expr of
+             Div op1 op2 -> if (op2 == 0 || (modBy op2 op1 /= 0)) then (filterDiv g) else Random.uniform expr []
+             _ -> Random.uniform expr []
+        )
+
+filterNegative : Random.Generator Expr -> Random.Generator Expr
+filterNegative g =
    g |> Random.andThen 
         (\expr ->
-             if eval expr < 0 then g
+             if eval expr < 0 then filterNegative g
              else Random.uniform expr []
         )
 
@@ -56,13 +75,15 @@ levelDescription : Int -> String
 levelDescription level = case level of
   1 -> "Plus/minus under 10."
   2 -> "Plus/minus under 100."
+  3 -> "Plus/minus/times/divsion under 10."
   _ -> Debug.todo "Unknown level"
 
 rand : Int -> Random.Generator Expr
 rand level =
     case level of
-      1 -> filterZero (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 1))
-      2 -> filterZero (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
+      1 -> filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 1))
+      2 -> filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
+      3 -> filterDiv (filterNegative (Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.int 0 3)))
       _ -> Debug.todo "Unknown level"
 
 type alias Click = 
