@@ -206,12 +206,15 @@ strLevel lang = case lang of
 
 buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
 
-levelButtons = List.map (\l -> button [onClick (Change l), style "font-size" "32px"] [text (String.fromInt l) ]) [1, 2, 3, 4]
+levelButtons curLevel = List.map 
+  (\l -> button ([onClick (Change l), style "font-size" "32px"] ++ (if curLevel == l then [style "font-weight" "bold"] else []))
+                [text (String.fromInt l)]) 
+  [1, 2, 3, 4]
 
 view : Model -> Html Msg
 view model =
   div []
-    ([div [style "text-align" "center"] levelButtons
+    ([div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
     , div [style "font-size" "64px", style "text-align" "center"] 

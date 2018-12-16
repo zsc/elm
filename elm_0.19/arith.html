@@ -5851,25 +5851,32 @@ var author$project$Main$buttonN = A2(
 var author$project$Main$Change = function (a) {
 	return {$: 'Change', a: a};
 };
-var author$project$Main$levelButtons = A2(
-	elm$core$List$map,
-	function (l) {
-		return A2(
-			elm$html$Html$button,
-			_List_fromArray(
-				[
-					elm$html$Html$Events$onClick(
-					author$project$Main$Change(l)),
-					A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-				]),
-			_List_fromArray(
-				[
-					elm$html$Html$text(
-					elm$core$String$fromInt(l))
-				]));
-	},
-	_List_fromArray(
-		[1, 2, 3, 4]));
+var author$project$Main$levelButtons = function (curLevel) {
+	return A2(
+		elm$core$List$map,
+		function (l) {
+			return A2(
+				elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(
+							author$project$Main$Change(l)),
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_Utils_eq(curLevel, l) ? _List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
+						]) : _List_Nil),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(l))
+					]));
+		},
+		_List_fromArray(
+			[1, 2, 3, 4]));
+};
 var author$project$Main$levelDescription = F2(
 	function (lang, level) {
 		switch (level) {
@@ -6198,7 +6205,7 @@ var author$project$Main$view = function (model) {
 						[
 							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
 						]),
-					author$project$Main$levelButtons),
+					author$project$Main$levelButtons(model.level)),
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(
