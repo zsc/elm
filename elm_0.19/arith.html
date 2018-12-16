@@ -5416,17 +5416,8 @@ var author$project$Main$subscriptions = function (model) {
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
-var author$project$Main$eval = function (expr) {
-	if (expr.$ === 'Plus') {
-		var a = expr.a;
-		var b = expr.b;
-		return a + b;
-	} else {
-		var a = expr.a;
-		var b = expr.b;
-		return a - b;
-	}
-};
+var elm$core$Basics$modBy = _Basics_modBy;
+var elm$core$Basics$neq = _Utils_notEqual;
 var elm$random$Random$Generator = function (a) {
 	return {$: 'Generator', a: a};
 };
@@ -5549,23 +5540,82 @@ var elm$random$Random$uniform = F2(
 			elm$random$Random$addOne(value),
 			A2(elm$core$List$map, elm$random$Random$addOne, valueList));
 	});
-var author$project$Main$filterZero = function (g) {
+var author$project$Main$filterDiv = function (g) {
 	return A2(
 		elm$random$Random$andThen,
 		function (expr) {
-			return (author$project$Main$eval(expr) < 0) ? g : A2(elm$random$Random$uniform, expr, _List_Nil);
+			if (expr.$ === 'Div') {
+				var op1 = expr.a;
+				var op2 = expr.b;
+				return ((!op2) || A2(elm$core$Basics$modBy, op2, op1)) ? author$project$Main$filterDiv(g) : A2(elm$random$Random$uniform, expr, _List_Nil);
+			} else {
+				return A2(elm$random$Random$uniform, expr, _List_Nil);
+			}
 		},
 		g);
 };
+var author$project$Main$eval = function (expr) {
+	switch (expr.$) {
+		case 'Plus':
+			var a = expr.a;
+			var b = expr.b;
+			return a + b;
+		case 'Minus':
+			var a = expr.a;
+			var b = expr.b;
+			return a - b;
+		case 'Times':
+			var a = expr.a;
+			var b = expr.b;
+			return a * b;
+		default:
+			var a = expr.a;
+			var b = expr.b;
+			return (a / b) | 0;
+	}
+};
+var author$project$Main$filterNegative = function (g) {
+	return A2(
+		elm$random$Random$andThen,
+		function (expr) {
+			return (author$project$Main$eval(expr) < 0) ? author$project$Main$filterNegative(g) : A2(elm$random$Random$uniform, expr, _List_Nil);
+		},
+		g);
+};
+var author$project$Main$Div = F2(
+	function (a, b) {
+		return {$: 'Div', a: a, b: b};
+	});
 var author$project$Main$Minus = F2(
 	function (a, b) {
 		return {$: 'Minus', a: a, b: b};
 	});
-var author$project$Main$toExpr = F3(
-	function (op1, op2, op) {
-		return (!op) ? A2(author$project$Main$Plus, op1, op2) : A2(author$project$Main$Minus, op1, op2);
+var author$project$Main$Times = F2(
+	function (a, b) {
+		return {$: 'Times', a: a, b: b};
 	});
 var elm$core$Debug$todo = _Debug_todo;
+var author$project$Main$toExpr = F3(
+	function (op1, op2, op) {
+		switch (op) {
+			case 0:
+				return A2(author$project$Main$Plus, op1, op2);
+			case 1:
+				return A2(author$project$Main$Minus, op1, op2);
+			case 2:
+				return A2(author$project$Main$Times, op1, op2);
+			case 3:
+				return A2(author$project$Main$Div, op1, op2);
+			default:
+				return _Debug_todo(
+					'Main',
+					{
+						start: {line: 54, column: 12},
+						end: {line: 54, column: 22}
+					})(
+					'Unknown operator: ' + elm$core$String$fromInt(op));
+		}
+	});
 var elm$random$Random$int = F2(
 	function (a, b) {
 		return elm$random$Random$Generator(
@@ -5622,7 +5672,7 @@ var elm$random$Random$map3 = F4(
 var author$project$Main$rand = function (level) {
 	switch (level) {
 		case 1:
-			return author$project$Main$filterZero(
+			return author$project$Main$filterNegative(
 				A4(
 					elm$random$Random$map3,
 					author$project$Main$toExpr,
@@ -5630,19 +5680,28 @@ var author$project$Main$rand = function (level) {
 					A2(elm$random$Random$int, 0, 9),
 					A2(elm$random$Random$int, 0, 1)));
 		case 2:
-			return author$project$Main$filterZero(
+			return author$project$Main$filterNegative(
 				A4(
 					elm$random$Random$map3,
 					author$project$Main$toExpr,
 					A2(elm$random$Random$int, 0, 99),
 					A2(elm$random$Random$int, 0, 99),
 					A2(elm$random$Random$int, 0, 1)));
+		case 3:
+			return author$project$Main$filterDiv(
+				author$project$Main$filterNegative(
+					A4(
+						elm$random$Random$map3,
+						author$project$Main$toExpr,
+						A2(elm$random$Random$int, 0, 9),
+						A2(elm$random$Random$int, 0, 9),
+						A2(elm$random$Random$int, 0, 3))));
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 66, column: 12},
-					end: {line: 66, column: 22}
+					start: {line: 87, column: 12},
+					end: {line: 87, column: 22}
 				})('Unknown level');
 	}
 };
@@ -5834,24 +5893,35 @@ var author$project$Main$levelDescription = function (level) {
 			return 'Plus/minus under 10.';
 		case 2:
 			return 'Plus/minus under 100.';
+		case 3:
+			return 'Plus/minus/times/divsion under 10.';
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 59, column: 8},
-					end: {line: 59, column: 18}
+					start: {line: 79, column: 8},
+					end: {line: 79, column: 18}
 				})('Unknown level');
 	}
 };
 var author$project$Main$repr = function (expr) {
-	if (expr.$ === 'Plus') {
-		var a = expr.a;
-		var b = expr.b;
-		return elm$core$String$fromInt(a) + (' + ' + elm$core$String$fromInt(b));
-	} else {
-		var a = expr.a;
-		var b = expr.b;
-		return elm$core$String$fromInt(a) + (' - ' + elm$core$String$fromInt(b));
+	switch (expr.$) {
+		case 'Plus':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' + ' + elm$core$String$fromInt(b));
+		case 'Minus':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' - ' + elm$core$String$fromInt(b));
+		case 'Times':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' × ' + elm$core$String$fromInt(b));
+		default:
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
 	}
 };
 var elm$core$Basics$round = _Basics_round;
