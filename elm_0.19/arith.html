@@ -5512,8 +5512,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 63, column: 12},
-						end: {line: 63, column: 22}
+						start: {line: 72, column: 12},
+						end: {line: 72, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -5776,8 +5776,8 @@ var author$project$Main$rand = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 137, column: 12},
-					end: {line: 137, column: 22}
+					start: {line: 146, column: 12},
+					end: {line: 146, column: 22}
 				})('Unknown level');
 	}
 };
@@ -6001,42 +6001,11 @@ var author$project$Main$levelDescription = F2(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 98, column: 8},
-						end: {line: 98, column: 18}
+						start: {line: 107, column: 8},
+						end: {line: 107, column: 18}
 					})('Unknown level');
 		}
 	});
-var author$project$Main$repr = function (expr) {
-	switch (expr.$) {
-		case 'Plus':
-			var a = expr.a;
-			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' + ' + elm$core$String$fromInt(b));
-		case 'Minus':
-			var a = expr.a;
-			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' - ' + elm$core$String$fromInt(b));
-		case 'Times':
-			var a = expr.a;
-			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' × ' + elm$core$String$fromInt(b));
-		case 'Div':
-			var a = expr.a;
-			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
-		case 'Exp':
-			var a = expr.a;
-			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' ^ ' + elm$core$String$fromInt(b));
-		case 'Log':
-			var a = expr.a;
-			var b = expr.b;
-			return 'log(' + (elm$core$String$fromInt(a) + (', ' + (elm$core$String$fromInt(b) + ')')));
-		default:
-			var a = expr.a;
-			return '√' + elm$core$String$fromInt(a);
-	}
-};
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -6125,6 +6094,144 @@ var author$project$Main$strWorst = function (lang) {
 		return 'Time, Expr';
 	} else {
 		return '时间，式子';
+	}
+};
+var author$project$Main$repr = function (expr) {
+	switch (expr.$) {
+		case 'Plus':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' + ' + elm$core$String$fromInt(b));
+		case 'Minus':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' - ' + elm$core$String$fromInt(b));
+		case 'Times':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' × ' + elm$core$String$fromInt(b));
+		case 'Div':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
+		case 'Exp':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' ^ ' + elm$core$String$fromInt(b));
+		case 'Log':
+			var a = expr.a;
+			var b = expr.b;
+			return 'log(' + (elm$core$String$fromInt(a) + (', ' + (elm$core$String$fromInt(b) + ')')));
+		default:
+			var a = expr.a;
+			return '√' + elm$core$String$fromInt(a);
+	}
+};
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$html$Html$sub = _VirtualDom_node('sub');
+var elm$html$Html$sup = _VirtualDom_node('sup');
+var author$project$Main$textExpr = function (expr) {
+	switch (expr.$) {
+		case 'Log':
+			var a = expr.a;
+			var b = expr.b;
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('log '),
+						A2(
+						elm$html$Html$sub,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'font-size', '72px')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromInt(a))
+							])),
+						elm$html$Html$text(
+						' ' + elm$core$String$fromInt(b))
+					]));
+		case 'Exp':
+			var a = expr.a;
+			var b = expr.b;
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(a)),
+						A2(
+						elm$html$Html$sup,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'font-size', '72px')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromInt(b))
+							]))
+					]));
+		case 'Sqrt':
+			var a = expr.a;
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'font-size', '72px')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('√')
+							])),
+						A2(
+						elm$html$Html$span,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'text-decoration', 'overline')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromInt(a))
+							]))
+					]));
+		default:
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						author$project$Main$repr(expr))
+					]));
 	}
 };
 var elm$core$List$sortBy = _List_sortBy;
@@ -6297,7 +6404,6 @@ var author$project$Main$worst = function (clicks) {
 	}
 };
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$div = _VirtualDom_node('div');
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6378,18 +6484,7 @@ var author$project$Main$view = function (model) {
 						[
 							elm$html$Html$text('　')
 						])),
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
-							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text(
-							author$project$Main$repr(model.dieFace))
-						])),
+					author$project$Main$textExpr(model.dieFace),
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(

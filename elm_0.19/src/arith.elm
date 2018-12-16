@@ -32,7 +32,7 @@ type Expr
  | Exp Int Int
  | Log Int Int
  | Sqrt Int
- 
+
 eval : Expr -> Int
 eval expr = case expr of
     Plus a b -> a + b
@@ -52,6 +52,15 @@ repr expr = case expr of
     Exp a b -> String.fromInt a ++ " ^ " ++ String.fromInt b
     Log a b -> "log(" ++ String.fromInt a ++ ", " ++ String.fromInt b ++ ")"
     Sqrt a -> "√" ++ String.fromInt a
+
+textExpr expr = case expr of
+    Log a b -> div [style "font-size" "96px", style "text-align" "center"] 
+                   [text ("log "), sub [style "font-size" "72px"] [text (String.fromInt a)], text (" " ++ String.fromInt b)]
+    Exp a b -> div [style "font-size" "96px", style "text-align" "center"]
+                   [text (String.fromInt a), sup [style "font-size" "72px"] [text (String.fromInt b)]]
+    Sqrt a -> div [style "font-size" "96px", style "text-align" "center"]
+                  [span [style "font-size" "72px"] [text "√"], span [style "text-decoration" "overline"] [text (String.fromInt a)]]
+    _ -> div [style "font-size" "96px", style "text-align" "center"] [text (repr expr)]
 
 toExpr : Int -> Int -> Int -> Expr
 toExpr op1 op2 op =
@@ -246,8 +255,7 @@ view model =
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
     , div [style "font-size" "32px"] [text "　"]
-    , div [style "font-size" "96px", style "text-align" "center"] 
-          [ text (repr model.dieFace) ]
+    , textExpr model.dieFace
     , div [style "text-align" "center"] [buttonN]
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
     , div [style "font-size" "24px"] [text (strWorst model.lang)]
