@@ -204,6 +204,10 @@ strLevel lang = case lang of
   LEngish -> "Level"
   LChinese -> "关卡"
 
+strWorst lang = case lang of
+  LEngish -> "Time, Expr"
+  LChinese -> "时间，式子"
+
 buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
 
 levelButtons curLevel = List.map 
@@ -223,5 +227,5 @@ view model =
           [ text (repr model.dieFace) ]
     , div [style "text-align" "center"] [buttonN]
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
-    , br [] []
+    , div [style "font-size" "24px"] [text (strWorst model.lang)]
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)))

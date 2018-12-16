@@ -6021,6 +6021,13 @@ var author$project$Main$strStat = F2(
 			return '共：' + (elm$core$String$fromInt(total) + ('，每分钟：' + elm$core$String$fromInt(qps)));
 		}
 	});
+var author$project$Main$strWorst = function (lang) {
+	if (lang.$ === 'LEngish') {
+		return 'Time, Expr';
+	} else {
+		return '时间，式子';
+	}
+};
 var elm$core$List$sortBy = _List_sortBy;
 var elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
@@ -6191,7 +6198,6 @@ var author$project$Main$worst = function (clicks) {
 	}
 };
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$br = _VirtualDom_node('br');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
@@ -6297,7 +6303,17 @@ var author$project$Main$view = function (model) {
 								model.lang,
 								author$project$Main$stat(model.clicks)))
 						])),
-					A2(elm$html$Html$br, _List_Nil, _List_Nil)
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '24px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							author$project$Main$strWorst(model.lang))
+						]))
 				]),
 			A2(
 				elm$core$List$map,
