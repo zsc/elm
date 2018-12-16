@@ -58,6 +58,12 @@ toExpr op1 op2 op =
 
 defaultLevel = 1
 
+filterTooLarge : Random.Generator Expr -> Random.Generator Expr
+filterTooLarge g =
+   g |> Random.andThen 
+        (\expr ->
+             if eval expr > 1000 then filterTooLarge g else Random.constant expr)
+
 filterNegative : Random.Generator Expr -> Random.Generator Expr
 filterNegative g =
    g |> Random.andThen 
@@ -88,7 +94,7 @@ genLevel3 =
 genLevel4 = 
   Random.int 0 3 |> Random.andThen
       (\i -> case i of
-           0 -> Random.map2 Exp (Random.int 1 3) (Random.int 0 9)
+           0 -> filterTooLarge (Random.map2 Exp (Random.int 1 3) (Random.int 0 9))
            _ -> genLevel3)
 
 rand : Int -> Random.Generator Expr

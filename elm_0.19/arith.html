@@ -5631,15 +5631,24 @@ var author$project$Main$Exp = F2(
 	function (a, b) {
 		return {$: 'Exp', a: a, b: b};
 	});
+var author$project$Main$filterTooLarge = function (g) {
+	return A2(
+		elm$random$Random$andThen,
+		function (expr) {
+			return (author$project$Main$eval(expr) > 1000) ? author$project$Main$filterTooLarge(g) : elm$random$Random$constant(expr);
+		},
+		g);
+};
 var author$project$Main$genLevel4 = A2(
 	elm$random$Random$andThen,
 	function (i) {
 		if (!i) {
-			return A3(
-				elm$random$Random$map2,
-				author$project$Main$Exp,
-				A2(elm$random$Random$int, 1, 3),
-				A2(elm$random$Random$int, 0, 9));
+			return author$project$Main$filterTooLarge(
+				A3(
+					elm$random$Random$map2,
+					author$project$Main$Exp,
+					A2(elm$random$Random$int, 1, 3),
+					A2(elm$random$Random$int, 0, 9)));
 		} else {
 			return author$project$Main$genLevel3;
 		}
@@ -5665,8 +5674,8 @@ var author$project$Main$rand = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 101, column: 12},
-					end: {line: 101, column: 22}
+					start: {line: 107, column: 12},
+					end: {line: 107, column: 22}
 				})('Unknown level');
 	}
 };
@@ -5879,8 +5888,8 @@ var author$project$Main$levelDescription = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 75, column: 8},
-					end: {line: 75, column: 18}
+					start: {line: 81, column: 8},
+					end: {line: 81, column: 18}
 				})('Unknown level');
 	}
 };
