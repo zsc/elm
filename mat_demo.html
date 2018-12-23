@@ -4846,6 +4846,7 @@ var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
 		{
+			level: 1,
 			matA: {
 				cols: 2,
 				data: A2(elm$core$List$range, 0, 3),
@@ -5409,6 +5410,13 @@ var elm$core$String$toInt = _String_toInt;
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
+			case 'ChangeLevel':
+				var lv = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{level: lv}),
+					elm$core$Platform$Cmd$none);
 			case 'ChangeA':
 				var row = msg.a;
 				var col = msg.b;
@@ -5451,8 +5459,8 @@ var author$project$Main$update = F2(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 99, column: 10},
-						end: {line: 99, column: 20}
+						start: {line: 118, column: 10},
+						end: {line: 118, column: 20}
 					})('');
 		}
 	});
@@ -5464,6 +5472,89 @@ var author$project$Main$ChangeB = F3(
 	function (a, b, c) {
 		return {$: 'ChangeB', a: a, b: b, c: c};
 	});
+var author$project$Main$ChangeLevel = function (a) {
+	return {$: 'ChangeLevel', a: a};
+};
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var author$project$Main$levelButtons = function (curLevel) {
+	return A2(
+		elm$core$List$map,
+		function (l) {
+			return A2(
+				elm$html$Html$button,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(
+							author$project$Main$ChangeLevel(l)),
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_Utils_eq(curLevel, l) ? _List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-weight', 'bold')
+						]) : _List_Nil),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(l))
+					]));
+		},
+		_List_fromArray(
+			[1, 2, 3]));
+};
+var author$project$Main$levelDescription = function (level) {
+	switch (level) {
+		case 1:
+			return '矩阵加';
+		case 2:
+			return '矩阵减';
+		case 3:
+			return '矩阵乘';
+		default:
+			return _Debug_todo(
+				'Main',
+				{
+					start: {line: 134, column: 8},
+					end: {line: 134, column: 18}
+				})('Unknown level');
+	}
+};
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -5618,6 +5709,40 @@ var author$project$Main$getRow = F2(
 			mat.cols * i,
 			A2(elm$core$List$take, mat.cols * (i + 1), mat.data));
 	});
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
+};
+var author$project$Main$matLift = F3(
+	function (op, matA, matB) {
+		var vecOp = elm$core$List$map2(
+			F2(
+				function (a, b) {
+					return A2(op, a, b);
+				}));
+		return {
+			cols: matB.cols,
+			data: elm$core$List$concat(
+				A2(
+					elm$core$List$map,
+					function (i) {
+						return A2(
+							vecOp,
+							A2(author$project$Main$getRow, i, matA),
+							A2(author$project$Main$getRow, i, matB));
+					},
+					A2(elm$core$List$range, 0, matA.rows - 1))),
+			rows: matA.rows
+		};
+	});
+var author$project$Main$matMinus = author$project$Main$matLift(elm$core$Basics$sub);
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -5657,18 +5782,7 @@ var author$project$Main$vecMatMul = F2(
 			},
 			A2(elm$core$List$range, 0, mat.cols - 1));
 	});
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
-var elm$core$List$concat = function (lists) {
-	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
-};
-var author$project$Main$matmul = F2(
+var author$project$Main$matMul = F2(
 	function (matA, matB) {
 		return {
 			cols: matB.cols,
@@ -5685,24 +5799,42 @@ var author$project$Main$matmul = F2(
 			rows: matA.rows
 		};
 	});
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
+var author$project$Main$matPlus = author$project$Main$matLift(elm$core$Basics$add);
+var author$project$Main$levelOperator = function (level) {
+	switch (level) {
+		case 1:
+			return author$project$Main$matPlus;
+		case 2:
+			return author$project$Main$matMinus;
+		case 3:
+			return author$project$Main$matMul;
 		default:
-			return 3;
+			return _Debug_todo(
+				'Main',
+				{
+					start: {line: 146, column: 8},
+					end: {line: 146, column: 18}
+				})('Unknown level');
+	}
+};
+var author$project$Main$levelOperatorRepr = function (level) {
+	switch (level) {
+		case 1:
+			return elm$html$Html$text(' + ');
+		case 2:
+			return elm$html$Html$text(' - ');
+		case 3:
+			return elm$html$Html$text(' × ');
+		default:
+			return _Debug_todo(
+				'Main',
+				{
+					start: {line: 140, column: 8},
+					end: {line: 140, column: 18}
+				})('Unknown level');
 	}
 };
 var elm$html$Html$input = _VirtualDom_node('input');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -5719,7 +5851,6 @@ var elm$html$Html$Events$alwaysStop = function (x) {
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -5783,8 +5914,6 @@ var author$project$Main$rowRepr = function (row) {
 		row);
 };
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var author$project$Main$repr = function (mat) {
 	return A2(
 		elm$core$List$map,
@@ -5856,6 +5985,25 @@ var author$project$Main$view = function (model) {
 					elm$html$Html$div,
 					_List_fromArray(
 						[
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+						]),
+					author$project$Main$levelButtons(model.level)),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px'),
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							'实验 ' + (elm$core$String$fromInt(model.level) + (': ' + author$project$Main$levelDescription(model.level))))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
 							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
 						]),
 					_Utils_ap(
@@ -5894,7 +6042,7 @@ var author$project$Main$view = function (model) {
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text(' × ')
+							author$project$Main$levelOperatorRepr(model.level)
 						])),
 					A2(
 					elm$html$Html$div,
@@ -5942,7 +6090,10 @@ var author$project$Main$view = function (model) {
 						]))
 				]),
 			author$project$Main$repr(
-				A2(author$project$Main$matmul, model.matA, model.matB))));
+				A2(
+					author$project$Main$levelOperator(model.level),
+					model.matA,
+					model.matB))));
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
