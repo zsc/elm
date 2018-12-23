@@ -5782,136 +5782,167 @@ var author$project$Main$rowRepr = function (row) {
 		'',
 		row);
 };
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var author$project$Main$repr = function (mat) {
-	return A3(
-		elm$core$List$foldl,
-		F2(
-			function (i, s) {
-				return s + (i + '\n');
-			}),
-		'',
-		A2(
-			elm$core$List$map,
-			function (i) {
-				return author$project$Main$rowRepr(
-					A2(author$project$Main$getRow, i, mat));
-			},
-			A2(elm$core$List$range, 0, mat.rows)));
+	return A2(
+		elm$core$List$map,
+		function (i) {
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '24px')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						(!i) ? '⎡' : '⎣'),
+						elm$html$Html$text(
+						author$project$Main$rowRepr(
+							A2(author$project$Main$getRow, i, mat))),
+						elm$html$Html$text(
+						(!i) ? '⎤' : '⎦')
+					]));
+		},
+		A2(elm$core$List$range, 0, mat.rows - 1));
 };
 var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$pre = _VirtualDom_node('pre');
 var elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var author$project$Main$view = function (model) {
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$a,
+		_Utils_ap(
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'font-size', '24px'),
+									elm$html$Html$Attributes$href('https://zsc.github.io/637913017.jpg')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('打赏')
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('　')
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_Utils_ap(
 						_List_fromArray(
 							[
-								A2(elm$html$Html$Attributes$style, 'font-size', '24px'),
-								elm$html$Html$Attributes$href('https://zsc.github.io/637913017.jpg')
+								elm$html$Html$text('⎡')
 							]),
+						_Utils_ap(
+							A4(author$project$Main$numButton, author$project$Main$ChangeA, 0, 2, model.matA),
+							_List_fromArray(
+								[
+									elm$html$Html$text('⎤')
+								])))),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_Utils_ap(
 						_List_fromArray(
 							[
-								elm$html$Html$text('打赏')
-							]))
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('　')
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				A4(author$project$Main$numButton, author$project$Main$ChangeA, 0, 2, model.matA)),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				A4(author$project$Main$numButton, author$project$Main$ChangeA, 1, 2, model.matA)),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text(' × ')
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				A4(author$project$Main$numButton, author$project$Main$ChangeB, 0, 2, model.matB)),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				A4(author$project$Main$numButton, author$project$Main$ChangeB, 1, 2, model.matB)),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text(' = ')
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '16px')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$pre,
-						_List_Nil,
+								elm$html$Html$text('⎣')
+							]),
+						_Utils_ap(
+							A4(author$project$Main$numButton, author$project$Main$ChangeA, 1, 2, model.matA),
+							_List_fromArray(
+								[
+									elm$html$Html$text('⎦')
+								])))),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(' × ')
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_Utils_ap(
 						_List_fromArray(
 							[
-								elm$html$Html$text(
-								author$project$Main$repr(
-									A2(author$project$Main$matmul, model.matA, model.matB)))
-							]))
-					]))
-			]));
+								elm$html$Html$text('⎡')
+							]),
+						_Utils_ap(
+							A4(author$project$Main$numButton, author$project$Main$ChangeB, 0, 2, model.matB),
+							_List_fromArray(
+								[
+									elm$html$Html$text('⎤')
+								])))),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$text('⎣')
+							]),
+						_Utils_ap(
+							A4(author$project$Main$numButton, author$project$Main$ChangeB, 1, 2, model.matB),
+							_List_fromArray(
+								[
+									elm$html$Html$text('⎦')
+								])))),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(' = ')
+						]))
+				]),
+			author$project$Main$repr(
+				A2(author$project$Main$matmul, model.matA, model.matB))));
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};

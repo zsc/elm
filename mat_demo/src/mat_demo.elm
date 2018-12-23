@@ -63,10 +63,10 @@ rowRepr : List Int -> String
 rowRepr row =
   List.foldl (\i s -> s ++ String.fromInt i ++ " ") "" row
 
-repr : Matrix -> String
-repr mat =
-  List.foldl (\i s -> s ++ i ++ "\n") ""
-             (List.map (\i -> rowRepr (getRow i mat)) (List.range 0 mat.rows))
+repr : Matrix -> List (Html msg)
+repr mat = List.map (\i -> div [style "font-size" "24px"] [text (if i == 0 then "⎡" else "⎣")
+                                 , text (rowRepr (getRow i mat))
+                                 , text (if i == 0 then "⎤" else "⎦")]) (List.range 0 (mat.rows - 1))
 
 init : () -> (Model, Cmd Msg)
 init _ =
@@ -118,11 +118,10 @@ view model =
   div []
     ([ div [style "text-align" "center"] [a [style "font-size" "24px", href "https://zsc.github.io/637913017.jpg"] [text "打赏"]]
     , div [style "font-size" "32px"] [text "　"]
-    , div [style "font-size" "32px"] (numButton ChangeA 0 2 model.matA)
-    , div [style "font-size" "32px"] (numButton ChangeA 1 2 model.matA)
+    , div [style "font-size" "32px"] ([text "⎡"] ++ numButton ChangeA 0 2 model.matA ++ [text "⎤"])
+    , div [style "font-size" "32px"] ([text "⎣"] ++ numButton ChangeA 1 2 model.matA ++ [text "⎦"])
     , div [style "font-size" "32px"] [text " × "]
-    , div [style "font-size" "32px"] (numButton ChangeB 0 2 model.matB)
-    , div [style "font-size" "32px"] (numButton ChangeB 1 2 model.matB)
+    , div [style "font-size" "32px"] ([text "⎡"] ++ numButton ChangeB 0 2 model.matB ++ [text "⎤"])
+    , div [style "font-size" "32px"] ([text "⎣"] ++ numButton ChangeB 1 2 model.matB ++ [text "⎦"])
     , div [style "font-size" "32px"] [text " = "]
-    , div [style "font-size" "16px"] [pre [] [text (repr (matmul model.matA model.matB))]]
-    ])
+    ] ++ repr (matmul model.matA model.matB))
