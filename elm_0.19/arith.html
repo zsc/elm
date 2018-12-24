@@ -5423,7 +5423,6 @@ var author$project$Main$PlusSqrt = F2(
 		return {$: 'PlusSqrt', a: a, b: b};
 	});
 var elm$core$Basics$pow = _Basics_pow;
-var elm$core$Basics$round = _Basics_round;
 var elm$core$Basics$sqrt = _Basics_sqrt;
 var author$project$Main$eval = function (expr) {
 	switch (expr.$) {
@@ -5450,17 +5449,14 @@ var author$project$Main$eval = function (expr) {
 		case 'Log':
 			var a = expr.a;
 			var b = expr.b;
-			return elm$core$Basics$round(
-				A2(elm$core$Basics$logBase, a, b));
+			return A2(elm$core$Basics$logBase, a, b);
 		case 'Sqrt':
 			var a = expr.a;
-			return elm$core$Basics$round(
-				elm$core$Basics$sqrt(a));
+			return elm$core$Basics$sqrt(a);
 		default:
 			var a = expr.a;
 			var b = expr.b;
-			return elm$core$Basics$round(
-				elm$core$Basics$sqrt(a) + elm$core$Basics$sqrt(b));
+			return elm$core$Basics$sqrt(a) + elm$core$Basics$sqrt(b);
 	}
 };
 var elm$random$Random$Generator = function (a) {
@@ -5624,31 +5620,144 @@ var elm$random$Random$map2 = F3(
 					seed2);
 			});
 	});
-var author$project$Main$genLevel3 = A2(
-	elm$random$Random$andThen,
-	function (i) {
-		switch (i) {
-			case 0:
-				return A3(
-					elm$random$Random$map2,
-					F2(
-						function (a, b) {
-							return A2(author$project$Main$Div, a * b, a);
-						}),
-					A2(elm$random$Random$int, 1, 9),
-					A2(elm$random$Random$int, 0, 9));
-			case 1:
-				return A4(
-					elm$random$Random$map3,
-					author$project$Main$toExpr,
-					A2(elm$random$Random$int, 0, 9),
-					A2(elm$random$Random$int, 0, 9),
-					elm$random$Random$constant(2));
-			default:
-				return author$project$Main$genLevel2;
+var elm$random$Random$addOne = function (value) {
+	return _Utils_Tuple2(1, value);
+};
+var elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var elm$core$List$sum = function (numbers) {
+	return A3(elm$core$List$foldl, elm$core$Basics$add, 0, numbers);
+};
+var elm$random$Random$float = F2(
+	function (a, b) {
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var seed1 = elm$random$Random$next(seed0);
+				var range = elm$core$Basics$abs(b - a);
+				var n1 = elm$random$Random$peel(seed1);
+				var n0 = elm$random$Random$peel(seed0);
+				var lo = (134217727 & n1) * 1.0;
+				var hi = (67108863 & n0) * 1.0;
+				var val = ((hi * 1.34217728e8) + lo) / 9.007199254740992e15;
+				var scaled = (val * range) + a;
+				return _Utils_Tuple2(
+					scaled,
+					elm$random$Random$next(seed1));
+			});
+	});
+var elm$random$Random$getByWeight = F3(
+	function (_n0, others, countdown) {
+		getByWeight:
+		while (true) {
+			var weight = _n0.a;
+			var value = _n0.b;
+			if (!others.b) {
+				return value;
+			} else {
+				var second = others.a;
+				var otherOthers = others.b;
+				if (_Utils_cmp(
+					countdown,
+					elm$core$Basics$abs(weight)) < 1) {
+					return value;
+				} else {
+					var $temp$_n0 = second,
+						$temp$others = otherOthers,
+						$temp$countdown = countdown - elm$core$Basics$abs(weight);
+					_n0 = $temp$_n0;
+					others = $temp$others;
+					countdown = $temp$countdown;
+					continue getByWeight;
+				}
+			}
 		}
-	},
-	A2(elm$random$Random$int, 0, 2));
+	});
+var elm$random$Random$map = F2(
+	function (func, _n0) {
+		var genA = _n0.a;
+		return elm$random$Random$Generator(
+			function (seed0) {
+				var _n1 = genA(seed0);
+				var a = _n1.a;
+				var seed1 = _n1.b;
+				return _Utils_Tuple2(
+					func(a),
+					seed1);
+			});
+	});
+var elm$random$Random$weighted = F2(
+	function (first, others) {
+		var normalize = function (_n0) {
+			var weight = _n0.a;
+			return elm$core$Basics$abs(weight);
+		};
+		var total = normalize(first) + elm$core$List$sum(
+			A2(elm$core$List$map, normalize, others));
+		return A2(
+			elm$random$Random$map,
+			A2(elm$random$Random$getByWeight, first, others),
+			A2(elm$random$Random$float, 0, total));
+	});
+var elm$random$Random$uniform = F2(
+	function (value, valueList) {
+		return A2(
+			elm$random$Random$weighted,
+			elm$random$Random$addOne(value),
+			A2(elm$core$List$map, elm$random$Random$addOne, valueList));
+	});
+var author$project$Main$toFloatExpr = function (exprs) {
+	var trans = F2(
+		function (e, f) {
+			switch (e.$) {
+				case 'Plus':
+					var a = e.a;
+					var b = e.b;
+					return A2(author$project$Main$Plus, a / f, b / f);
+				case 'Minus':
+					var a = e.a;
+					var b = e.b;
+					return A2(author$project$Main$Minus, a / f, b / f);
+				default:
+					return e;
+			}
+		});
+	return A3(
+		elm$random$Random$map2,
+		trans,
+		exprs,
+		A2(
+			elm$random$Random$uniform,
+			1.0,
+			_List_fromArray(
+				[10.0, 100.0])));
+};
+var author$project$Main$genLevel3 = author$project$Main$toFloatExpr(
+	A2(
+		elm$random$Random$andThen,
+		function (i) {
+			switch (i) {
+				case 0:
+					return A3(
+						elm$random$Random$map2,
+						F2(
+							function (a, b) {
+								return A2(author$project$Main$Div, a * b, a);
+							}),
+						A2(elm$random$Random$int, 1, 9),
+						A2(elm$random$Random$int, 0, 9));
+				case 1:
+					return A4(
+						elm$random$Random$map3,
+						author$project$Main$toExpr,
+						A2(elm$random$Random$int, 0, 9),
+						A2(elm$random$Random$int, 0, 9),
+						elm$random$Random$constant(2));
+				default:
+					return author$project$Main$genLevel2;
+			}
+		},
+		A2(elm$random$Random$int, 0, 2)));
 var author$project$Main$Exp = F2(
 	function (a, b) {
 		return {$: 'Exp', a: a, b: b};
@@ -5715,19 +5824,6 @@ try {
 	};
 } catch ($) {
 throw 'Some top-level definitions from `Main` are causing infinite recursion:\n\n  ┌─────┐\n  │    genLogPair\n  └─────┘\n\nThese errors are very tricky, so read https://elm-lang.org/0.19.0/halting-problem to learn how to fix it!';}
-var elm$random$Random$map = F2(
-	function (func, _n0) {
-		var genA = _n0.a;
-		return elm$random$Random$Generator(
-			function (seed0) {
-				var _n1 = genA(seed0);
-				var a = _n1.a;
-				var seed1 = _n1.b;
-				return _Utils_Tuple2(
-					func(a),
-					seed1);
-			});
-	});
 var author$project$Main$genLevel5 = A2(
 	elm$random$Random$andThen,
 	function (i) {
@@ -6013,6 +6109,7 @@ var author$project$Main$levelDescription = F2(
 				}
 		}
 	});
+var elm$core$Basics$round = _Basics_round;
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -6103,16 +6200,17 @@ var author$project$Main$strWorst = function (lang) {
 		return '时间，式子';
 	}
 };
+var elm$core$String$fromFloat = _String_fromNumber;
 var author$project$Main$repr = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
 			var a = expr.a;
 			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' + ' + elm$core$String$fromInt(b));
+			return elm$core$String$fromFloat(a) + (' + ' + elm$core$String$fromFloat(b));
 		case 'Minus':
 			var a = expr.a;
 			var b = expr.b;
-			return elm$core$String$fromInt(a) + (' - ' + elm$core$String$fromInt(b));
+			return elm$core$String$fromFloat(a) + (' - ' + elm$core$String$fromFloat(b));
 		case 'Times':
 			var a = expr.a;
 			var b = expr.b;
@@ -6251,7 +6349,7 @@ var author$project$Main$reprEval = function (e) {
 		var b = e.b;
 		return author$project$Main$repr(e) + (' = sqrt(' + (elm$core$String$fromInt(a) + (') + sqrt(' + (elm$core$String$fromInt(b) + ')'))));
 	} else {
-		return author$project$Main$repr(e) + (' = ' + elm$core$String$fromInt(
+		return author$project$Main$repr(e) + (' = ' + elm$core$String$fromFloat(
 			author$project$Main$eval(e)));
 	}
 };

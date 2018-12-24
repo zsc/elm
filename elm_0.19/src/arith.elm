@@ -25,8 +25,8 @@ main =
 -- MODEL
 
 type Expr
- = Plus Int Int
- | Minus Int Int
+ = Plus Float Float
+ | Minus Float Float
  | Times Int Int
  | Div Int Int
  | Exp Int Int
@@ -34,26 +34,26 @@ type Expr
  | Sqrt Int
  | PlusSqrt Int Int
 
-eval : Expr -> Int
+eval : Expr -> Float
 eval expr = case expr of
     Plus a b -> a + b
     Minus a b -> a - b
-    Times a b -> a * b
-    Div a b -> a // b
-    Exp a b -> a ^ b
-    Log a b -> round (logBase (toFloat a) (toFloat b))
-    Sqrt a -> round (sqrt (toFloat a))
-    PlusSqrt a b -> round (sqrt (toFloat a) + sqrt (toFloat b))
+    Times a b -> toFloat (a * b)
+    Div a b -> toFloat (a // b)
+    Exp a b -> toFloat (a ^ b)
+    Log a b -> logBase (toFloat a) (toFloat b)
+    Sqrt a -> sqrt (toFloat a)
+    PlusSqrt a b -> sqrt (toFloat a) + sqrt (toFloat b)
 
 reprEval : Expr -> String
 reprEval e = case e of
     PlusSqrt a b -> repr e ++ " = sqrt(" ++ String.fromInt a ++ ") + sqrt(" ++ String.fromInt b ++ ")"
-    _ -> repr e ++ " = " ++ String.fromInt (eval e)
+    _ -> repr e ++ " = " ++ String.fromFloat (eval e)
 
 repr : Expr -> String
 repr expr = case expr of
-    Plus a b -> String.fromInt a ++ " + " ++ String.fromInt b
-    Minus a b -> String.fromInt a ++ " - " ++ String.fromInt b
+    Plus a b -> String.fromFloat a ++ " + " ++ String.fromFloat b
+    Minus a b -> String.fromFloat a ++ " - " ++ String.fromFloat b
     Times a b -> String.fromInt a ++ " × " ++ String.fromInt b
     Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
     Exp a b -> String.fromInt a ++ " ^ " ++ String.fromInt b
@@ -73,8 +73,8 @@ textExpr expr = case expr of
 toExpr : Int -> Int -> Int -> Expr
 toExpr op1 op2 op =
   case op of
-      0 -> Plus op1 op2
-      1 -> Minus op1 op2
+      0 -> Plus (toFloat op1) (toFloat op2)
+      1 -> Minus (toFloat op1) (toFloat op2)
       2 -> Times op1 op2
       3 -> Div op1 op2
       _ -> Debug.todo ("Unknown operator: " ++ String.fromInt op)
@@ -119,6 +119,14 @@ levelDescription lang level = case level of
 genLevel2 : Random.Generator Expr
 genLevel2 = filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
 
+toFloatExpr : Random.Generator Expr -> Random.Generator Expr
+toFloatExpr exprs =
+  let trans e f = case e of
+        Plus a b -> Plus (a / f) (b / f)
+        Minus a b -> Minus (a / f) (b / f)
+        _ -> e in
+  Random.map2 trans exprs (Random.uniform 1.0 [10.0, 100.0])
+
 genLevel3 : Random.Generator Expr
 genLevel3 =
   Random.int 0 2 |> Random.andThen
@@ -126,6 +134,7 @@ genLevel3 =
            0 -> Random.map2 (\a b -> Div (a * b) a) (Random.int 1 9) (Random.int 0 9)
            1 -> Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.constant 2)
            _ -> genLevel2)
+  |> toFloatExpr
 
 genLevel4 = 
   Random.int 0 3 |> Random.andThen
