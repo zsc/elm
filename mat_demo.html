@@ -5471,8 +5471,8 @@ var author$project$Main$fromJust = function (m_a) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 41, column: 14},
-				end: {line: 41, column: 24}
+				start: {line: 39, column: 14},
+				end: {line: 39, column: 24}
 			})('fromJust');
 	}
 };
@@ -5518,17 +5518,14 @@ var elm$core$Array$get = F2(
 			A2(elm$core$Elm$JsArray$unsafeGet, elm$core$Array$bitMask & index, tail)) : elm$core$Maybe$Just(
 			A3(elm$core$Array$getHelp, startShift, index, tree)));
 	});
-var author$project$Main$getRow = F2(
-	function (row, mat) {
-		return author$project$Main$fromJust(
-			A2(elm$core$Array$get, row, mat));
-	});
 var author$project$Main$getVal = F3(
 	function (row, col, mat) {
-		return A2(
-			author$project$Main$getRow,
-			col,
-			A2(author$project$Main$getRow, row, mat));
+		return author$project$Main$fromJust(
+			A2(
+				elm$core$Array$get,
+				col,
+				author$project$Main$fromJust(
+					A2(elm$core$Array$get, row, mat))));
 	});
 var elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
 var elm$core$Array$setHelp = F4(
@@ -5582,7 +5579,8 @@ var author$project$Main$setVal = F4(
 				elm$core$Array$set,
 				col,
 				val,
-				A2(author$project$Main$getRow, row, mat)),
+				author$project$Main$fromJust(
+					A2(elm$core$Array$get, row, mat))),
 			mat);
 	});
 var elm$core$Maybe$withDefault = F2(
@@ -5647,8 +5645,8 @@ var author$project$Main$update = F2(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 114, column: 10},
-						end: {line: 114, column: 20}
+						start: {line: 107, column: 10},
+						end: {line: 107, column: 20}
 					})('');
 		}
 	});
@@ -5738,8 +5736,8 @@ var author$project$Main$levelDescription = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 130, column: 8},
-					end: {line: 130, column: 18}
+					start: {line: 123, column: 8},
+					end: {line: 123, column: 18}
 				})('Unknown level');
 	}
 };
@@ -5777,7 +5775,11 @@ var author$project$Main$matLift = F3(
 			matA,
 			matB);
 	});
-var author$project$Main$matMinus = author$project$Main$matLift(elm$core$Basics$sub);
+var author$project$Main$numCols = function (mat) {
+	return elm$core$Array$length(
+		author$project$Main$fromJust(
+			A2(elm$core$Array$get, 0, mat)));
+};
 var elm$core$Elm$JsArray$foldl = _JsArray_foldl;
 var elm$core$Array$foldl = F3(
 	function (func, baseCase, _n0) {
@@ -5799,12 +5801,6 @@ var elm$core$Array$foldl = F3(
 			A3(elm$core$Elm$JsArray$foldl, helper, baseCase, tree),
 			tail);
 	});
-var author$project$Main$arrSum = A2(elm$core$Array$foldl, elm$core$Basics$add, 0);
-var author$project$Main$numCols = function (mat) {
-	return elm$core$Array$length(
-		author$project$Main$fromJust(
-			A2(elm$core$Array$get, 0, mat)));
-};
 var author$project$Main$matMul = F2(
 	function (matA, matB) {
 		return A2(
@@ -5815,7 +5811,10 @@ var author$project$Main$matMul = F2(
 					elm$core$Array$initialize,
 					author$project$Main$numCols(matB),
 					function (k) {
-						return author$project$Main$arrSum(
+						return A3(
+							elm$core$Array$foldl,
+							elm$core$Basics$add,
+							0,
 							A2(
 								elm$core$Array$initialize,
 								elm$core$Array$length(matB),
@@ -5825,21 +5824,20 @@ var author$project$Main$matMul = F2(
 					});
 			});
 	});
-var author$project$Main$matPlus = author$project$Main$matLift(elm$core$Basics$add);
 var author$project$Main$levelOperator = function (level) {
 	switch (level) {
 		case 1:
-			return author$project$Main$matPlus;
+			return author$project$Main$matLift(elm$core$Basics$add);
 		case 2:
-			return author$project$Main$matMinus;
+			return author$project$Main$matLift(elm$core$Basics$sub);
 		case 3:
 			return author$project$Main$matMul;
 		default:
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 142, column: 8},
-					end: {line: 142, column: 18}
+					start: {line: 135, column: 8},
+					end: {line: 135, column: 18}
 				})('Unknown level');
 	}
 };
@@ -5855,8 +5853,8 @@ var author$project$Main$levelOperatorRepr = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 136, column: 8},
-					end: {line: 136, column: 18}
+					start: {line: 129, column: 8},
+					end: {line: 129, column: 18}
 				})('Unknown level');
 	}
 };
