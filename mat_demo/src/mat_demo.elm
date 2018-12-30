@@ -30,10 +30,8 @@ type alias Model =
   , level : Int
   }
 
-getRow row mat = fromJust (Array.get row mat)
-
 getVal : Int -> Int -> Matrix -> Int
-getVal row col mat = getRow col (getRow row mat)
+getVal row col mat = Array.get col (Array.get row mat |> fromJust) |> fromJust
 
 fromJust : Maybe a -> a
 fromJust m_a = case m_a of
@@ -41,23 +39,18 @@ fromJust m_a = case m_a of
   Nothing -> Debug.todo "fromJust"
 
 setVal : Int -> Int -> Matrix -> Int -> Matrix
-setVal row col mat val = Array.set row (Array.set col val (getRow row mat)) mat
+setVal row col mat val = Array.set row (Array.set col val (Array.get row mat |> fromJust)) mat
 
 zipWith : (a -> b -> c) -> Array a -> Array b -> Array c
 zipWith op arrA arrB =
   let len = min (Array.length arrA) (Array.length arrB) in
   Array.initialize len (\i -> op (fromJust (Array.get i arrA)) (fromJust (Array.get i arrB)))
 
-arrSum = Array.foldl (+) 0
-
 vecMatMul : Array Int -> Matrix -> Array Int
-vecMatMul vec mat = Array.map (\a -> arrSum (zipWith (*) vec a)) mat
+vecMatMul vec mat = Array.map (\a -> Array.foldl (+) 0 (zipWith (*) vec a)) mat
 
 matLift : (Int -> Int -> Int) -> Matrix -> Matrix -> Matrix
 matLift op matA matB = zipWith (zipWith op) matA matB
-
-matPlus = matLift (+)
-matMinus = matLift (-)
 
 numCols : Matrix -> Int
 numCols mat = Array.length (fromJust (Array.get 0 mat))
@@ -66,7 +59,7 @@ matMul : Matrix -> Matrix -> Matrix
 matMul matA matB = 
   Array.initialize (Array.length matA) (\i ->
     Array.initialize (numCols matB) (\k ->
-      arrSum (Array.initialize (Array.length matB) (\j -> (getVal i j matA) * (getVal j k matB)))))
+      Array.foldl (+) 0 (Array.initialize (Array.length matB) (\j -> (getVal i j matA) * (getVal j k matB)))))
 
 rowRepr : Array Int -> String
 rowRepr row = Array.foldl (\i s -> s ++ String.fromInt i ++ " ") "" row
@@ -136,8 +129,8 @@ levelOperatorRepr level = case level of
   _ -> Debug.todo "Unknown level"
 
 levelOperator level = case level of
-  1 -> matPlus
-  2 -> matMinus
+  1 -> matLift (+)
+  2 -> matLift (-)
   3 -> matMul
   _ -> Debug.todo "Unknown level"
 
