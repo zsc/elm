@@ -1,3 +1,4 @@
+import Array exposing ( Array )
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
@@ -21,11 +22,7 @@ main =
 
 -- MODEL
 
-type alias Matrix =
-  { data : List Int
-  , rows : Int
-  , cols : Int
-  }
+type alias Matrix = Array (Array Int)
 
 type alias Model =
   { matA : Matrix
@@ -33,57 +30,56 @@ type alias Model =
   , level : Int
   }
 
-nth : Int -> List Int -> Int
-nth n lst =
-  Maybe.withDefault -1 (List.head (List.drop n lst))
+getRow row mat = fromJust (Array.get row mat)
 
 getVal : Int -> Int -> Matrix -> Int
-getVal row col mat = nth (row * mat.cols + col) mat.data
+getVal row col mat = getRow col (getRow row mat)
+
+fromJust : Maybe a -> a
+fromJust m_a = case m_a of
+  Just v -> v
+  Nothing -> Debug.todo "fromJust"
 
 setVal : Int -> Int -> Matrix -> Int -> Matrix
-setVal row col mat val =
-  {mat | data = List.map2
-       (\v i -> if i == row * mat.cols + col then val else v) mat.data (List.range 0 (mat.cols * mat.rows - 1))}
+setVal row col mat val = Array.set row (Array.set col val (getRow row mat)) mat
 
-vecMatMul : List Int -> Matrix -> List Int
-vecMatMul vec mat =
-    List.map (\k -> List.sum (List.map (\j -> (nth j vec) * (getVal j k) mat) (List.range 0 (mat.rows - 1)))) (List.range 0 (mat.cols - 1))
+zipWith : (a -> b -> c) -> Array a -> Array b -> Array c
+zipWith op arrA arrB =
+  let len = min (Array.length arrA) (Array.length arrB) in
+  Array.initialize len (\i -> op (fromJust (Array.get i arrA)) (fromJust (Array.get i arrB)))
+
+arrSum = Array.foldl (+) 0
+
+vecMatMul : Array Int -> Matrix -> Array Int
+vecMatMul vec mat = Array.map (\a -> arrSum (zipWith (*) vec a)) mat
 
 matLift : (Int -> Int -> Int) -> Matrix -> Matrix -> Matrix
-matLift op matA matB =
-    let vecOp = List.map2 (\a b -> op a b) in
-    { data = List.concat (List.map (\i -> vecOp (getRow i matA) (getRow i matB)) (List.range 0 (matA.rows - 1)))
-    , rows = matA.rows
-    , cols = matB.cols
-    }
+matLift op matA matB = zipWith (zipWith op) matA matB
 
 matPlus = matLift (+)
 matMinus = matLift (-)
 
+numCols : Matrix -> Int
+numCols mat = Array.length (fromJust (Array.get 0 mat))
+
 matMul : Matrix -> Matrix -> Matrix
-matMul matA matB =
-    { data = List.concat (List.map (\i -> vecMatMul (getRow i matA) matB) (List.range 0 (matA.rows - 1)))
-    , rows = matA.rows
-    , cols = matB.cols
-    }
+matMul matA matB = 
+  Array.initialize (Array.length matA) (\i ->
+    Array.initialize (numCols matB) (\k ->
+      arrSum (Array.initialize (Array.length matB) (\j -> (getVal i j matA) * (getVal j k matB)))))
 
-getRow : Int -> Matrix -> List Int
-getRow i mat =
-  List.drop (mat.cols * i) (List.take (mat.cols * (i + 1)) mat.data)
-
-rowRepr : List Int -> String
-rowRepr row =
-  List.foldl (\i s -> s ++ String.fromInt i ++ " ") "" row
+rowRepr : Array Int -> String
+rowRepr row = Array.foldl (\i s -> s ++ String.fromInt i ++ " ") "" row
 
 repr : Matrix -> List (Html msg)
 repr mat = List.map (\i -> div [style "font-size" "24px"] [text (if i == 0 then "⎡" else "⎣")
-                                 , text (rowRepr (getRow i mat))
-                                 , text (if i == 0 then "⎤" else "⎦")]) (List.range 0 (mat.rows - 1))
+                                 , text (rowRepr (fromJust (Array.get i mat)))
+                                 , text (if i == 0 then "⎤" else "⎦")]) (List.range 0 (Array.length mat - 1))
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( { matA = {data = List.range 0 3 , rows = 2 , cols = 2 }
-    , matB = {data = List.range 0 3 , rows = 2 , cols = 2 }
+  ( { matA = Array.fromList (List.map Array.fromList [[0, 1], [2, 3]])
+    , matB = Array.fromList (List.map Array.fromList [[0, 1], [2, 3]])
     , level = 1
     }
   , Cmd.none
