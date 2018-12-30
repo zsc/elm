@@ -108,11 +108,11 @@ update msg model =
       , Cmd.none
       )
     ChangeA row col value ->
-      ( {model | matA = setVal row col model.matA (Maybe.withDefault -1 (String.toInt value))}
+      ( {model | matA = setVal row col model.matA (Maybe.withDefault (getVal row col model.matA) (String.toInt value))}
       , Cmd.none
       )
     ChangeB row col value ->
-      ( {model | matB = setVal row col model.matB (Maybe.withDefault -1 (String.toInt value))}
+      ( {model | matB = setVal row col model.matB (Maybe.withDefault (getVal row col model.matB) (String.toInt value))}
       , Cmd.none
       )
     _ -> Debug.todo ""
