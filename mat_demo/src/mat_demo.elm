@@ -22,40 +22,41 @@ main =
 
 -- MODEL
 
-type alias Matrix = Array (Array Int)
+type alias Tensor a =
+  { data : Array a
+  , dims : List Int
+  }
 
 type alias Model =
-  { matA : Matrix
-  , matB : Matrix
+  { mats : Tensor Int
   , level : Int
   }
 
-getVal : Int -> Int -> Matrix -> Int
-getVal row col mat = Array.get col (Array.get row mat |> fromJust) |> fromJust
+zipWith : (a -> b -> c) -> Tensor a -> Tensor b -> Tensor c
+zipWith op tenA tenB =
+  let arrA = tenA.data in
+  let arrB = tenB.data in
+  let len = min (Array.length arrA) (Array.length arrB) in
+  { data = Array.initialize len (\i -> op (fromJust (Array.get i arrA)) (fromJust (Array.get i arrB)))
+  , dims = List.map2 min tenA.dims tenB.dims
+  }
+
+getIndex : List Int -> Tensor a -> Int
+getIndex indices tensor =
+  Array.foldl (+) 0 (zipWith (*) indices (List.scanl (*) 1 (List.reverse (tensor.dims)) |> List.reverse |> List.drop 1))
+
+getVal : List Int -> Tensor a -> a
+getVal indices tensor = Array.get (getIndex indices tensor) tensor.data
 
 fromJust : Maybe a -> a
 fromJust m_a = case m_a of
   Just v -> v
   Nothing -> Debug.todo "fromJust"
 
-setVal : Int -> Int -> Matrix -> Int -> Matrix
-setVal row col mat val = Array.set row (Array.set col val (Array.get row mat |> fromJust)) mat
+setVal : List Int -> a -> Tensor a -> Tensor a
+setVal indices val tensor = {tensor | data = Array.set (getIndex indices tensor) val tensor.data}
 
-zipWith : (a -> b -> c) -> Array a -> Array b -> Array c
-zipWith op arrA arrB =
-  let len = min (Array.length arrA) (Array.length arrB) in
-  Array.initialize len (\i -> op (fromJust (Array.get i arrA)) (fromJust (Array.get i arrB)))
-
-vecMatMul : Array Int -> Matrix -> Array Int
-vecMatMul vec mat = Array.map (\a -> Array.foldl (+) 0 (zipWith (*) vec a)) mat
-
-matLift : (Int -> Int -> Int) -> Matrix -> Matrix -> Matrix
-matLift op matA matB = zipWith (zipWith op) matA matB
-
-numCols : Matrix -> Int
-numCols mat = Array.length (fromJust (Array.get 0 mat))
-
-matMul : Matrix -> Matrix -> Matrix
+matMul : Tensor Int -> Tensor Int -> Tensor Int
 matMul matA matB = 
   Array.initialize (Array.length matA) (\i ->
     Array.initialize (numCols matB) (\k ->
@@ -64,7 +65,7 @@ matMul matA matB =
 rowRepr : Array Int -> String
 rowRepr row = Array.foldl (\i s -> s ++ String.fromInt i ++ " ") "" row
 
-repr : Matrix -> List (Html msg)
+repr : Tensor Int -> List (Html msg)
 repr mat = List.map (\i -> div [style "font-size" "24px"] [text (if i == 0 then "⎡" else "⎣")
                                  , text (rowRepr (fromJust (Array.get i mat)))
                                  , text (if i == 0 then "⎤" else "⎦")]) (List.range 0 (Array.length mat - 1))
@@ -129,8 +130,8 @@ levelOperatorRepr level = case level of
   _ -> Debug.todo "Unknown level"
 
 levelOperator level = case level of
-  1 -> matLift (+)
-  2 -> matLift (-)
+  1 -> zipWith (+)
+  2 -> zipWith (-)
   3 -> matMul
   _ -> Debug.todo "Unknown level"
 
