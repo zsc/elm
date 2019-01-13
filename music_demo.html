@@ -5501,6 +5501,26 @@ var author$project$Main$getFileName = function (n) {
 		'',
 		A2(elm$core$Array$get, n, author$project$Main$fnames));
 };
+var author$project$Main$syllable = function (x) {
+	switch (x) {
+		case 'C4':
+			return 'do';
+		case 'D4':
+			return 're';
+		case 'E4':
+			return 'mi';
+		case 'F4':
+			return 'fa';
+		case 'G4':
+			return 'sol';
+		case 'A4':
+			return 'la';
+		case 'B4':
+			return 'si';
+		default:
+			return '';
+	}
+};
 var elm$core$String$slice = _String_slice;
 var elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
@@ -5650,11 +5670,14 @@ var author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							answer: A3(
-								elm$core$String$slice,
-								10,
-								12,
-								author$project$Main$getFileName(model.dice))
+							answer: function () {
+								var note = A3(
+									elm$core$String$slice,
+									10,
+									12,
+									author$project$Main$getFileName(model.dice));
+								return note + (' ' + author$project$Main$syllable(note));
+							}()
 						}),
 					elm$core$Platform$Cmd$none);
 			case 'NewFace':
@@ -5751,8 +5774,8 @@ var author$project$Main$levelDescription = function (level) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 84, column: 8},
-				end: {line: 84, column: 18}
+				start: {line: 94, column: 8},
+				end: {line: 94, column: 18}
 			})('Unknown level');
 	}
 };

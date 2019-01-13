@@ -11,6 +11,16 @@ import Time
 
 -- MAIN
 
+syllable x = case x of
+  "C4" -> "do" 
+  "D4" -> "re" 
+  "E4" -> "mi" 
+  "F4" -> "fa" 
+  "G4" -> "sol" 
+  "A4" -> "la" 
+  "B4" -> "si" 
+  _ -> ""
+
 fnames = Array.fromList [ "PrimNote11A3-midi.pdf.svg.png" , "PrimNote11A4-midi.pdf.svg.png" , "PrimNote11B3-midi.pdf.svg.png" , "PrimNote11B4-midi.pdf.svg.png" , "PrimNote11C3-midi.pdf.svg.png" , "PrimNote11C4-midi.pdf.svg.png" , "PrimNote11D3-midi.pdf.svg.png" , "PrimNote11D4-midi.pdf.svg.png" , "PrimNote11E3-midi.pdf.svg.png" , "PrimNote11E4-midi.pdf.svg.png" , "PrimNote11F3-midi.pdf.svg.png" , "PrimNote11F4-midi.pdf.svg.png" , "PrimNote11G3-midi.pdf.svg.png" , "PrimNote11G4-midi.pdf.svg.png" , "PrimNote12A3-midi.pdf.svg.png" , "PrimNote12A4-midi.pdf.svg.png" , "PrimNote12B3-midi.pdf.svg.png" , "PrimNote12B4-midi.pdf.svg.png" , "PrimNote12C3-midi.pdf.svg.png" , "PrimNote12C4-midi.pdf.svg.png" , "PrimNote12D3-midi.pdf.svg.png" , "PrimNote12D4-midi.pdf.svg.png" , "PrimNote12E3-midi.pdf.svg.png" , "PrimNote12E4-midi.pdf.svg.png" , "PrimNote12F3-midi.pdf.svg.png" , "PrimNote12F4-midi.pdf.svg.png" , "PrimNote12G3-midi.pdf.svg.png" , "PrimNote12G4-midi.pdf.svg.png" , "PrimNote14A3-midi.pdf.svg.png" , "PrimNote14A4-midi.pdf.svg.png" , "PrimNote14B3-midi.pdf.svg.png" , "PrimNote14B4-midi.pdf.svg.png" , "PrimNote14C3-midi.pdf.svg.png" , "PrimNote14C4-midi.pdf.svg.png" , "PrimNote14D3-midi.pdf.svg.png" , "PrimNote14D4-midi.pdf.svg.png" , "PrimNote14E3-midi.pdf.svg.png" , "PrimNote14E4-midi.pdf.svg.png" , "PrimNote14F3-midi.pdf.svg.png" , "PrimNote14F4-midi.pdf.svg.png" , "PrimNote14G3-midi.pdf.svg.png" , "PrimNote14G4-midi.pdf.svg.png" , "PrimNote18A3-midi.pdf.svg.png" , "PrimNote18A4-midi.pdf.svg.png" , "PrimNote18B3-midi.pdf.svg.png" , "PrimNote18B4-midi.pdf.svg.png" , "PrimNote18C3-midi.pdf.svg.png" , "PrimNote18C4-midi.pdf.svg.png" , "PrimNote18D3-midi.pdf.svg.png" , "PrimNote18D4-midi.pdf.svg.png" , "PrimNote18E3-midi.pdf.svg.png" , "PrimNote18E4-midi.pdf.svg.png" , "PrimNote18F3-midi.pdf.svg.png" , "PrimNote18F4-midi.pdf.svg.png" , "PrimNote18G3-midi.pdf.svg.png" , "PrimNote18G4-midi.pdf.svg.png" ]
 
 main =
@@ -58,7 +68,7 @@ update msg model =
       , Random.generate NewFace (Random.int 0 55)
       )
     Show -> 
-      ( { model | answer = String.slice 10 12 (getFileName model.dice)}
+      ( { model | answer = let note = String.slice 10 12 (getFileName model.dice) in note ++ " " ++ syllable note}
       , Cmd.none
       )
     NewFace newFace ->
