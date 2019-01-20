@@ -5401,7 +5401,7 @@ var elm$time$Time$every = F2(
 			A2(elm$time$Time$Every, interval, tagger));
 	});
 var author$project$Main$subscriptions = function (model) {
-	return A2(elm$time$Time$every, 100, author$project$Main$Tick);
+	return A2(elm$time$Time$every, 4000, author$project$Main$Tick);
 };
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
@@ -5665,21 +5665,6 @@ var author$project$Main$update = F2(
 						elm$random$Random$generate,
 						author$project$Main$NewFace,
 						A2(elm$random$Random$int, 0, 55)));
-			case 'Show':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							answer: function () {
-								var note = A3(
-									elm$core$String$slice,
-									10,
-									12,
-									author$project$Main$getFileName(model.dice));
-								return note + (' ' + author$project$Main$syllable(note));
-							}()
-						}),
-					elm$core$Platform$Cmd$none);
 			case 'NewFace':
 				var newFace = msg.a;
 				return _Utils_Tuple2(
@@ -5695,11 +5680,23 @@ var author$project$Main$update = F2(
 						{level: lv}),
 					elm$core$Platform$Cmd$none);
 			default:
-				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							answer: function () {
+								var note = A3(
+									elm$core$String$slice,
+									10,
+									12,
+									author$project$Main$getFileName(model.dice));
+								return note + (' ' + author$project$Main$syllable(note));
+							}()
+						}),
+					elm$core$Platform$Cmd$none);
 		}
 	});
 var author$project$Main$Roll = {$: 'Roll'};
-var author$project$Main$Show = {$: 'Show'};
 var author$project$Main$ChangeLevel = function (a) {
 	return {$: 'ChangeLevel', a: a};
 };
@@ -5774,8 +5771,8 @@ var author$project$Main$levelDescription = function (level) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 94, column: 8},
-				end: {line: 94, column: 18}
+				start: {line: 93, column: 8},
+				end: {line: 93, column: 18}
 			})('Unknown level');
 	}
 };
@@ -5891,16 +5888,6 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$text('Next')
-					])),
-				A2(
-				elm$html$Html$button,
-				_List_fromArray(
-					[
-						elm$html$Html$Events$onClick(author$project$Main$Show)
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('Answer')
 					]))
 			]));
 };
