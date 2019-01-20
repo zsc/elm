@@ -19,6 +19,13 @@ syllable x = case x of
   "G4" -> "sol" 
   "A4" -> "la" 
   "B4" -> "si" 
+  "C3" -> "do3" 
+  "D3" -> "re3" 
+  "E3" -> "mi3" 
+  "F3" -> "fa3" 
+  "G3" -> "sol3" 
+  "A3" -> "la3" 
+  "B3" -> "si3" 
   _ -> ""
 
 fnames = Array.fromList [ "PrimNote11A3-midi.pdf.svg.png" , "PrimNote11A4-midi.pdf.svg.png" , "PrimNote11B3-midi.pdf.svg.png" , "PrimNote11B4-midi.pdf.svg.png" , "PrimNote11C3-midi.pdf.svg.png" , "PrimNote11C4-midi.pdf.svg.png" , "PrimNote11D3-midi.pdf.svg.png" , "PrimNote11D4-midi.pdf.svg.png" , "PrimNote11E3-midi.pdf.svg.png" , "PrimNote11E4-midi.pdf.svg.png" , "PrimNote11F3-midi.pdf.svg.png" , "PrimNote11F4-midi.pdf.svg.png" , "PrimNote11G3-midi.pdf.svg.png" , "PrimNote11G4-midi.pdf.svg.png" , "PrimNote12A3-midi.pdf.svg.png" , "PrimNote12A4-midi.pdf.svg.png" , "PrimNote12B3-midi.pdf.svg.png" , "PrimNote12B4-midi.pdf.svg.png" , "PrimNote12C3-midi.pdf.svg.png" , "PrimNote12C4-midi.pdf.svg.png" , "PrimNote12D3-midi.pdf.svg.png" , "PrimNote12D4-midi.pdf.svg.png" , "PrimNote12E3-midi.pdf.svg.png" , "PrimNote12E4-midi.pdf.svg.png" , "PrimNote12F3-midi.pdf.svg.png" , "PrimNote12F4-midi.pdf.svg.png" , "PrimNote12G3-midi.pdf.svg.png" , "PrimNote12G4-midi.pdf.svg.png" , "PrimNote14A3-midi.pdf.svg.png" , "PrimNote14A4-midi.pdf.svg.png" , "PrimNote14B3-midi.pdf.svg.png" , "PrimNote14B4-midi.pdf.svg.png" , "PrimNote14C3-midi.pdf.svg.png" , "PrimNote14C4-midi.pdf.svg.png" , "PrimNote14D3-midi.pdf.svg.png" , "PrimNote14D4-midi.pdf.svg.png" , "PrimNote14E3-midi.pdf.svg.png" , "PrimNote14E4-midi.pdf.svg.png" , "PrimNote14F3-midi.pdf.svg.png" , "PrimNote14F4-midi.pdf.svg.png" , "PrimNote14G3-midi.pdf.svg.png" , "PrimNote14G4-midi.pdf.svg.png" , "PrimNote18A3-midi.pdf.svg.png" , "PrimNote18A4-midi.pdf.svg.png" , "PrimNote18B3-midi.pdf.svg.png" , "PrimNote18B4-midi.pdf.svg.png" , "PrimNote18C3-midi.pdf.svg.png" , "PrimNote18C4-midi.pdf.svg.png" , "PrimNote18D3-midi.pdf.svg.png" , "PrimNote18D4-midi.pdf.svg.png" , "PrimNote18E3-midi.pdf.svg.png" , "PrimNote18E4-midi.pdf.svg.png" , "PrimNote18F3-midi.pdf.svg.png" , "PrimNote18F4-midi.pdf.svg.png" , "PrimNote18G3-midi.pdf.svg.png" , "PrimNote18G4-midi.pdf.svg.png" ]
@@ -74,7 +81,7 @@ update msg model =
       , Cmd.none
       )
     _ -> 
-      ( { model | answer = let note = String.slice 10 12 (getFileName model.dice) in note ++ " " ++ syllable note}
+      ( { model | answer = let note = String.slice 10 12 (getFileName model.dice) in syllable note ++ " " ++ note}
       , Cmd.none
       )
 
@@ -83,7 +90,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Time.every 4000 Tick
+  Time.every 3000 Tick
 
 
 -- VIEW

@@ -5401,7 +5401,7 @@ var elm$time$Time$every = F2(
 			A2(elm$time$Time$Every, interval, tagger));
 	});
 var author$project$Main$subscriptions = function (model) {
-	return A2(elm$time$Time$every, 4000, author$project$Main$Tick);
+	return A2(elm$time$Time$every, 3000, author$project$Main$Tick);
 };
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
@@ -5517,6 +5517,20 @@ var author$project$Main$syllable = function (x) {
 			return 'la';
 		case 'B4':
 			return 'si';
+		case 'C3':
+			return 'do3';
+		case 'D3':
+			return 're3';
+		case 'E3':
+			return 'mi3';
+		case 'F3':
+			return 'fa3';
+		case 'G3':
+			return 'sol3';
+		case 'A3':
+			return 'la3';
+		case 'B3':
+			return 'si3';
 		default:
 			return '';
 	}
@@ -5690,7 +5704,7 @@ var author$project$Main$update = F2(
 									10,
 									12,
 									author$project$Main$getFileName(model.dice));
-								return note + (' ' + author$project$Main$syllable(note));
+								return author$project$Main$syllable(note) + (' ' + note);
 							}()
 						}),
 					elm$core$Platform$Cmd$none);
@@ -5771,8 +5785,8 @@ var author$project$Main$levelDescription = function (level) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 93, column: 8},
-				end: {line: 93, column: 18}
+				start: {line: 100, column: 8},
+				end: {line: 100, column: 18}
 			})('Unknown level');
 	}
 };
