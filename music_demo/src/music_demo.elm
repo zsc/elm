@@ -67,24 +67,23 @@ update msg model =
       ( { model | answer = "" }
       , Random.generate NewFace (Random.int 0 55)
       )
-    Show -> 
-      ( { model | answer = let note = String.slice 10 12 (getFileName model.dice) in note ++ " " ++ syllable note}
-      , Cmd.none
-      )
     NewFace newFace ->
       ( {model | dice = newFace}, Cmd.none)
     ChangeLevel lv ->
       ( {model | level = lv}
       , Cmd.none
       )
-    Tick _ -> ( model, Cmd.none )
+    _ -> 
+      ( { model | answer = let note = String.slice 10 12 (getFileName model.dice) in note ++ " " ++ syllable note}
+      , Cmd.none
+      )
 
 -- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Time.every 100 Tick
+  Time.every 4000 Tick
 
 
 -- VIEW
@@ -111,5 +110,5 @@ view model =
     , div [style "font-size" "32px"]
           [img [src ("notes/" ++ getFileName model.dice), height 100] [], text model.answer]
     , button [ onClick Roll ] [ text "Next" ]
-    , button [ onClick Show ] [ text "Answer" ]
+    --, button [ onClick Show ] [ text "Answer" ]
     ])
