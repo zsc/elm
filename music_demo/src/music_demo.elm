@@ -50,7 +50,7 @@ type alias Model =
 init : () -> (Model, Cmd Msg)
 init _ =
   ( { dice = 0
-    , answer = ""
+    , answer = "　"
     , level = 1
     }
   , Cmd.none
@@ -71,7 +71,7 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
-      ( { model | answer = "" }
+      ( { model | answer = "　" }
       , Random.generate NewFace (Random.int 0 55)
       )
     NewFace newFace ->
@@ -114,8 +114,9 @@ view model =
     , div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text ("关卡 " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
-    , div [style "font-size" "32px"]
-          [img [src ("notes/" ++ getFileName model.dice), height 100] [], text model.answer]
-    , button [ onClick Roll ] [ text "Next" ]
+    , div [style "text-align" "center", style "font-size" "32px"]
+          [img [src ("notes/" ++ getFileName model.dice), height 200] []]
+    , div [style "text-align" "center", style "font-size" "32px"] [text model.answer]
+    , div [style "text-align" "center"] [button [ onClick Roll , style "font-size" "32px"] [ text "Next" ]]
     --, button [ onClick Show ] [ text "Answer" ]
     ])
