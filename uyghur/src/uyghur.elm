@@ -203,7 +203,8 @@ view model =
     , div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text ("关卡 " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
-    , div [style "text-align" "center", style "font-size" "32px"] [text model.question]
+    , div [style "font-size" "32px"] [text "　"]
+    , div [style "text-align" "center", style "font-size" "64px"] [text model.question]
     , div [style "text-align" "center", style "font-size" "32px"] [text model.answer]
     , div [style "text-align" "center"] [button [ onClick Roll , style "font-size" "32px"] [ text "Next" ]]
     --, button [ onClick Show ] [ text "Answer" ]
