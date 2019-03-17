@@ -16,6 +16,7 @@ import Time
 splitRoman x = case x of
   [] -> []
   a::b::tl -> case (a, b) of
+       ("g", "n") ->  ["ng"] ++ splitRoman tl
        ("h", "g") ->  ["gh"] ++ splitRoman tl
        ("h", "k") ->  ["kh"] ++ splitRoman tl
        ("h", "c") ->  ["ch"] ++ splitRoman tl

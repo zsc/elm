@@ -5415,8 +5415,8 @@ var author$project$Main$fromJust = function (x) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 28, column: 14},
-				end: {line: 28, column: 24}
+				start: {line: 29, column: 14},
+				end: {line: 29, column: 24}
 			})('impossible');
 	}
 };
@@ -5860,8 +5860,8 @@ var author$project$Main$levelDescription = function (level) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 201, column: 8},
-				end: {line: 201, column: 18}
+				start: {line: 202, column: 8},
+				end: {line: 202, column: 18}
 			})('Unknown level');
 	}
 };
@@ -5875,35 +5875,45 @@ var author$project$Main$splitRoman = function (x) {
 			var b = _n1.a;
 			var tl = _n1.b;
 			var _n2 = _Utils_Tuple2(a, b);
-			_n2$4:
+			_n2$5:
 			while (true) {
-				if (_n2.a === 'h') {
-					switch (_n2.b) {
-						case 'g':
+				switch (_n2.a) {
+					case 'g':
+						if (_n2.b === 'n') {
 							return _Utils_ap(
 								_List_fromArray(
-									['gh']),
+									['ng']),
 								author$project$Main$splitRoman(tl));
-						case 'k':
-							return _Utils_ap(
-								_List_fromArray(
-									['kh']),
-								author$project$Main$splitRoman(tl));
-						case 'c':
-							return _Utils_ap(
-								_List_fromArray(
-									['ch']),
-								author$project$Main$splitRoman(tl));
-						case 's':
-							return _Utils_ap(
-								_List_fromArray(
-									['sh']),
-								author$project$Main$splitRoman(tl));
-						default:
-							break _n2$4;
-					}
-				} else {
-					break _n2$4;
+						} else {
+							break _n2$5;
+						}
+					case 'h':
+						switch (_n2.b) {
+							case 'g':
+								return _Utils_ap(
+									_List_fromArray(
+										['gh']),
+									author$project$Main$splitRoman(tl));
+							case 'k':
+								return _Utils_ap(
+									_List_fromArray(
+										['kh']),
+									author$project$Main$splitRoman(tl));
+							case 'c':
+								return _Utils_ap(
+									_List_fromArray(
+										['ch']),
+									author$project$Main$splitRoman(tl));
+							case 's':
+								return _Utils_ap(
+									_List_fromArray(
+										['sh']),
+									author$project$Main$splitRoman(tl));
+							default:
+								break _n2$5;
+						}
+					default:
+						break _n2$5;
 				}
 			}
 			return _Utils_ap(
