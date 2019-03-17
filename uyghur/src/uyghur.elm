@@ -13,6 +13,16 @@ import Time
 
 -- MAIN
 
+splitRoman x = case x of
+  [] -> []
+  a::b::tl -> case (a, b) of
+       ("h", "g") ->  ["gh"] ++ splitRoman tl
+       ("h", "k") ->  ["kh"] ++ splitRoman tl
+       ("h", "c") ->  ["ch"] ++ splitRoman tl
+       ("h", "s") ->  ["sh"] ++ splitRoman tl
+       _ -> [a] ++ splitRoman (b::tl)
+  a::tl -> [a] ++ splitRoman tl
+
 fromJust x = case x of
   Just v -> v
   Nothing -> Debug.todo "impossible"
@@ -206,6 +216,9 @@ view model =
     , div [style "font-size" "32px"] [text "　"]
     , div [style "text-align" "center", style "font-size" "64px"] [text model.question]
     , div [style "text-align" "center", style "font-size" "32px"] [text model.answer]
+    , div [style "text-align" "center", style "font-size" "32px"] [text (String.join " " (String.split "" model.question))]
+    , div [style "text-align" "center", style "font-size" "32px"]
+          [text (String.join " " (splitRoman (String.split "" (String.reverse model.answer))))]
     , div [style "text-align" "center"] [button [ onClick Roll , style "font-size" "32px"] [ text "Next" ]]
     --, button [ onClick Show ] [ text "Answer" ]
     ])

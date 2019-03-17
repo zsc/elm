@@ -5415,8 +5415,8 @@ var author$project$Main$fromJust = function (x) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 18, column: 14},
-				end: {line: 18, column: 24}
+				start: {line: 28, column: 14},
+				end: {line: 28, column: 24}
 			})('impossible');
 	}
 };
@@ -5860,11 +5860,68 @@ var author$project$Main$levelDescription = function (level) {
 		return _Debug_todo(
 			'Main',
 			{
-				start: {line: 191, column: 8},
-				end: {line: 191, column: 18}
+				start: {line: 201, column: 8},
+				end: {line: 201, column: 18}
 			})('Unknown level');
 	}
 };
+var author$project$Main$splitRoman = function (x) {
+	if (!x.b) {
+		return _List_Nil;
+	} else {
+		if (x.b.b) {
+			var a = x.a;
+			var _n1 = x.b;
+			var b = _n1.a;
+			var tl = _n1.b;
+			var _n2 = _Utils_Tuple2(a, b);
+			_n2$4:
+			while (true) {
+				if (_n2.a === 'h') {
+					switch (_n2.b) {
+						case 'g':
+							return _Utils_ap(
+								_List_fromArray(
+									['gh']),
+								author$project$Main$splitRoman(tl));
+						case 'k':
+							return _Utils_ap(
+								_List_fromArray(
+									['kh']),
+								author$project$Main$splitRoman(tl));
+						case 'c':
+							return _Utils_ap(
+								_List_fromArray(
+									['ch']),
+								author$project$Main$splitRoman(tl));
+						case 's':
+							return _Utils_ap(
+								_List_fromArray(
+									['sh']),
+								author$project$Main$splitRoman(tl));
+						default:
+							break _n2$4;
+					}
+				} else {
+					break _n2$4;
+				}
+			}
+			return _Utils_ap(
+				_List_fromArray(
+					[a]),
+				author$project$Main$splitRoman(
+					A2(elm$core$List$cons, b, tl)));
+		} else {
+			var a = x.a;
+			var tl = x.b;
+			return _Utils_ap(
+				_List_fromArray(
+					[a]),
+				author$project$Main$splitRoman(tl));
+		}
+	}
+};
+var elm$core$String$reverse = _String_reverse;
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -5967,6 +6024,40 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$text(model.answer)
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center'),
+						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						A2(
+							elm$core$String$join,
+							' ',
+							A2(elm$core$String$split, '', model.question)))
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center'),
+						A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						A2(
+							elm$core$String$join,
+							' ',
+							author$project$Main$splitRoman(
+								A2(
+									elm$core$String$split,
+									'',
+									elm$core$String$reverse(model.answer)))))
 					])),
 				A2(
 				elm$html$Html$div,
