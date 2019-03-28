@@ -28,6 +28,7 @@ type alias Model =
   , level : Int
   , pool : List Int
   , last : Int
+  , ignored : List Int
   }
 
 init : () -> (Model, Cmd Msg)
@@ -36,6 +37,7 @@ init _ =
     , level = 1
     , pool = []
     , last = 0
+    , ignored = []
     }
   , Cmd.none
   )
@@ -45,7 +47,8 @@ init _ =
 
 type Msg
   = Roll
-  | Show
+  | Ignore
+  -- | Show
   | ChangeLevel Int
   | NewFace (Int, Int)
   | Tick Time.Posix
@@ -61,14 +64,20 @@ fromJust x = case x of
 nth n lst = fromJust (Array.get n (Array.fromList lst))
 
 updateModel (i, j) model =
-  if i >= 0 && i /= model.last then {model | question = toString (nth i model.pool), last = i} else {model | pool = j :: model.pool, question = toString j, last = j}
+  if i >= 0 && i /= model.last && not (List.member i model.ignored) then {model | question = toString (nth i model.pool), last = i} else {model | pool = j :: model.pool, question = toString j, last = j}
+
+genNewFace model = Random.generate NewFace (Random.pair (Random.int -1 (List.length model.pool - 1)) (Random.int 0 984))
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    Ignore ->
+      ( {model | ignored = model.last :: model.ignored}
+      , genNewFace model
+      )
     Roll ->
       ( model
-      , Random.generate NewFace (Random.pair (Random.int -1 (List.length model.pool - 1)) (Random.int 0 984))
+      , genNewFace model
       )
     NewFace newFace ->
       ( updateModel newFace model, Cmd.none)
@@ -111,6 +120,6 @@ view model =
     , div [style "font-size" "32px"] [text "　"]
     , div [style "text-align" "center", style "font-size" "32px"]
           [img [src ("list/" ++ model.question ++ ".jpg"), height 300] []]
-    , div [style "text-align" "center"] [button [ onClick Roll , style "font-size" "32px"] [ text "Next" ]]
+    , div [style "text-align" "center"] [button [ onClick Ignore , style "font-size" "32px"] [ text "Ignore" ], button [ onClick Roll , style "font-size" "32px"] [ text "Next" ]]
     --, button [ onClick Show ] [ text "Answer" ]
     ])
