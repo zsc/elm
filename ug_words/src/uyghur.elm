@@ -26,12 +26,16 @@ main =
 type alias Model =
   { question : String
   , level : Int
+  , pool : List Int
+  , last : Int
   }
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( { question = "00000"
+  ( { question = toString 0
     , level = 1
+    , pool = []
+    , last = 0
     }
   , Cmd.none
   )
@@ -43,22 +47,31 @@ type Msg
   = Roll
   | Show
   | ChangeLevel Int
-  | NewFace Int
+  | NewFace (Int, Int)
   | Tick Time.Posix
 
 toString i =
   let s = String.fromInt i in
   String.padLeft 5 '0' s 
 
+fromJust x = case x of
+  Just v -> v
+  Nothing -> Debug.todo "impossible" 
+
+nth n lst = fromJust (Array.get n (Array.fromList lst))
+
+updateModel (i, j) model =
+  if i >= 0 && i /= model.last then {model | question = toString (nth i model.pool), last = i} else {model | pool = j :: model.pool, question = toString j, last = j}
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Roll ->
       ( model
-      , Random.generate NewFace (Random.int 0 984)
+      , Random.generate NewFace (Random.pair (Random.int -1 (List.length model.pool - 1)) (Random.int 0 984))
       )
     NewFace newFace ->
-      ( {model | question = toString newFace}, Cmd.none)
+      ( updateModel newFace model, Cmd.none)
     ChangeLevel lv ->
       ( {model | level = lv}
       , Cmd.none
