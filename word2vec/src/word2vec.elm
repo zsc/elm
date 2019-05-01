@@ -28,7 +28,7 @@ init : Model
 init =
   { content = "", content2 = "", content3 = "" }
 
-interpolate x y z = "unknown" -- x + y - z
+interpolate x y z = x ++ y ++ z
 
 -- UPDATE
 
