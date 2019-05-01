@@ -54,7 +54,9 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [style "font-size" "48px"]
-    [ input [ placeholder "Input a word", value model.content, onInput Change ] []
+    [ text "Word2vec demo"
+    , div [] []
+    , input [ placeholder "Input a word", value model.content, onInput Change ] []
     , div [style "font-size" "24px", style "display" "inline"] [text " - "]
     , input [ placeholder "Input a word", value model.content2, onInput Change2 ] []
     , div [] []
