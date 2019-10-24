@@ -5395,8 +5395,8 @@ var author$project$Main$update = F2(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 75, column: 10},
-						end: {line: 75, column: 20}
+						start: {line: 77, column: 10},
+						end: {line: 77, column: 20}
 					})('');
 		}
 	});
@@ -5405,6 +5405,10 @@ var author$project$Main$ChangeA = function (a) {
 };
 var author$project$Main$ChangeB = function (a) {
 	return {$: 'ChangeB', a: a};
+};
+var elm$core$String$words = _String_words;
+var author$project$Main$explode = function (str) {
+	return elm$core$String$words(str);
 };
 var elm$core$Dict$getMin = function (dict) {
 	getMin:
@@ -5799,24 +5803,18 @@ var elm$core$Set$insert = F2(
 var elm$core$Set$fromList = function (list) {
 	return A3(elm$core$List$foldl, elm$core$Set$insert, elm$core$Set$empty, list);
 };
-var elm$core$String$concat = function (strings) {
-	return A2(elm$core$String$join, '', strings);
-};
 var author$project$Main$diff_string = F2(
 	function (strA, strB) {
-		var lstA = A2(elm$core$String$split, '\n', strA);
-		var lstB = A2(elm$core$String$split, '\n', strB);
-		return elm$core$String$concat(
-			A2(
-				elm$core$List$map,
-				function (x) {
-					return ' ' + x;
-				},
-				elm$core$Set$toList(
-					A2(
-						elm$core$Set$diff,
-						elm$core$Set$fromList(lstA),
-						elm$core$Set$fromList(lstB)))));
+		var lstA = author$project$Main$explode(strA);
+		var lstB = author$project$Main$explode(strB);
+		return A2(
+			elm$core$String$join,
+			' ',
+			elm$core$Set$toList(
+				A2(
+					elm$core$Set$diff,
+					elm$core$Set$fromList(lstA),
+					elm$core$Set$fromList(lstB))));
 	});
 var author$project$Main$ChangeLevel = function (a) {
 	return {$: 'ChangeLevel', a: a};
@@ -5896,8 +5894,8 @@ var author$project$Main$levelDescription = function (level) {
 			return _Debug_todo(
 				'Main',
 				{
-					start: {line: 91, column: 8},
-					end: {line: 91, column: 18}
+					start: {line: 93, column: 8},
+					end: {line: 93, column: 18}
 				})('Unknown level');
 	}
 };

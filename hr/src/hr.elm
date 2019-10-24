@@ -52,10 +52,12 @@ type Msg
   | ChangeB String
   | Tick Time.Posix
 
+explode str = String.words str
+
 diff_string strA strB =
-   let lstA = String.split "\n" strA in 
-   let lstB = String.split "\n" strB in 
-   String.concat (List.map (\x -> " " ++ x) (Set.toList (Set.diff (Set.fromList lstA) (Set.fromList lstB))))
+   let lstA = explode strA in 
+   let lstB = explode strB in 
+   String.join " " (Set.toList (Set.diff (Set.fromList lstA) (Set.fromList lstB)))
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
