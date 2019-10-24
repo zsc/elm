@@ -55,7 +55,7 @@ type Msg
 diff_string strA strB =
    let lstA = String.split "\n" strA in 
    let lstB = String.split "\n" strB in 
-   "　" ++ String.concat (List.map (\x -> "\n" ++ x) (Set.toList (Set.diff (Set.fromList lstA) (Set.fromList lstB))))
+   String.concat (List.map (\x -> " " ++ x) (Set.toList (Set.diff (Set.fromList lstA) (Set.fromList lstB))))
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =

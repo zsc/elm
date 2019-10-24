@@ -5806,11 +5806,11 @@ var author$project$Main$diff_string = F2(
 	function (strA, strB) {
 		var lstA = A2(elm$core$String$split, '\n', strA);
 		var lstB = A2(elm$core$String$split, '\n', strB);
-		return '　' + elm$core$String$concat(
+		return elm$core$String$concat(
 			A2(
 				elm$core$List$map,
 				function (x) {
-					return '\n' + x;
+					return ' ' + x;
 				},
 				elm$core$Set$toList(
 					A2(
