@@ -108,8 +108,8 @@ view model =
     --, div [style "font-size" "24px"] [text "名单B"]
     --, div [style "font-size" "32px"] ()
     , div [style "font-size" "24px"] [text "名单A - 名单B"]
-    , div [style "font-size" "32px"] [text (diff_string model.fieldA model.fieldB)]
+    , div [style "font-size" "16px"] [text (diff_string model.fieldA model.fieldB)]
     , div [style "font-size" "24px"] [text "名单B - 名单A"]
-    , div [style "font-size" "32px"] [text (diff_string model.fieldB model.fieldA)]
+    , div [style "font-size" "16px"] [text (diff_string model.fieldB model.fieldA)]
     ]
     )
