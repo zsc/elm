@@ -93,9 +93,9 @@ levelDescription level = case level of
   _ -> Debug.todo "Unknown level"
 
 levelButtons curLevel = List.map
-  (\l -> button ([onClick (ChangeLevel l), style "font-size" "32px"] ++ (if curLevel == l then [style "font-weight" "bold"] else []))
-                [text (String.fromInt l)])
-  [1, 2, 3]
+  (\l -> button ([onClick (ChangeLevel l), style "font-size" "24px"] ++ (if curLevel == l then [style "font-weight" "bold"] else []))
+                [text (levelDescription l)])
+  [1]
 
 view : Model -> Html Msg
 view model =
@@ -103,8 +103,8 @@ view model =
     ([ div [style "text-align" "center"] [a [style "font-size" "24px", href "https://zsc.github.io/637913017.jpg"] [text "打赏"]]
     , div [style "font-size" "32px"] [text "　"]
     , div [style "text-align" "center"] (levelButtons model.level)
-    , div [style "font-size" "32px", style "text-align" "center"]
-          [ text ("功能 " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
+    --, div [style "font-size" "32px", style "text-align" "center"]
+    --      [ text ("功能 " ++ String.fromInt model.level ++ ": " ++ levelDescription model.level)]
     --, div [style "font-size" "24px"] [text "名单A"]
     , div [style "font-size" "32px"] ([textarea [ rows (max 10 (List.length (String.split "\n" model.fieldA))), placeholder "名单A", value (model.fieldA) , onInput ChangeA] []] ++ [textarea [ rows (max 10 (List.length (String.split "\n" model.fieldB))), placeholder "名单B", value (model.fieldB) , onInput ChangeB] []])
     --, div [style "font-size" "24px"] [text "名单B"]
