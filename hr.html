@@ -5819,6 +5819,23 @@ var author$project$Main$diff_string = F2(
 var author$project$Main$ChangeLevel = function (a) {
 	return {$: 'ChangeLevel', a: a};
 };
+var author$project$Main$levelDescription = function (level) {
+	switch (level) {
+		case 1:
+			return '比名单';
+		case 2:
+			return '矩阵减';
+		case 3:
+			return '矩阵乘';
+		default:
+			return _Debug_todo(
+				'Main',
+				{
+					start: {line: 93, column: 8},
+					end: {line: 93, column: 18}
+				})('Unknown level');
+	}
+};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
@@ -5867,7 +5884,7 @@ var author$project$Main$levelButtons = function (curLevel) {
 						[
 							elm$html$Html$Events$onClick(
 							author$project$Main$ChangeLevel(l)),
-							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+							A2(elm$html$Html$Attributes$style, 'font-size', '24px')
 						]),
 					_Utils_eq(curLevel, l) ? _List_fromArray(
 						[
@@ -5876,28 +5893,11 @@ var author$project$Main$levelButtons = function (curLevel) {
 				_List_fromArray(
 					[
 						elm$html$Html$text(
-						elm$core$String$fromInt(l))
+						author$project$Main$levelDescription(l))
 					]));
 		},
 		_List_fromArray(
-			[1, 2, 3]));
-};
-var author$project$Main$levelDescription = function (level) {
-	switch (level) {
-		case 1:
-			return '比名单';
-		case 2:
-			return '矩阵减';
-		case 3:
-			return '矩阵乘';
-		default:
-			return _Debug_todo(
-				'Main',
-				{
-					start: {line: 93, column: 8},
-					end: {line: 93, column: 18}
-				})('Unknown level');
-	}
+			[1]));
 };
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -6000,18 +6000,6 @@ var author$project$Main$view = function (model) {
 						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
 					]),
 				author$project$Main$levelButtons(model.level)),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2(elm$html$Html$Attributes$style, 'font-size', '32px'),
-						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text(
-						'功能 ' + (elm$core$String$fromInt(model.level) + (': ' + author$project$Main$levelDescription(model.level))))
-					])),
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
