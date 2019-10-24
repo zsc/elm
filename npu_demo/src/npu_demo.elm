@@ -54,9 +54,8 @@ type alias Chunk =
 
 type Net =
     Net_Chunk Chunk
-  | Net_Unpool Net
-  | Net_Concat (List Net)
-  | Net_Conv ConvParam Net
+  | Net_UnPool Net
+  | Net_Conv ConvParam (List Net)
 
 type alias ConvParam = 
   { oc : Int
