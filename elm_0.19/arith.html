@@ -5442,6 +5442,14 @@ var author$project$Main$eval = function (expr) {
 			var a = expr.a;
 			var b = expr.b;
 			return (a / b) | 0;
+		case 'MulFrac':
+			var a = expr.a;
+			var b = expr.b;
+			return (a / b) | 0;
+		case 'FracMul':
+			var a = expr.a;
+			var b = expr.b;
+			return (a / b) | 0;
 		case 'Exp':
 			var a = expr.a;
 			var b = expr.b;
@@ -5517,8 +5525,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 80, column: 12},
-						end: {line: 80, column: 22}
+						start: {line: 95, column: 12},
+						end: {line: 95, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -5603,6 +5611,14 @@ var author$project$Main$genLevel2 = author$project$Main$filterNegative(
 		A2(elm$random$Random$int, 0, 99),
 		A2(elm$random$Random$int, 0, 99),
 		A2(elm$random$Random$int, 0, 1)));
+var author$project$Main$FracMul = F2(
+	function (a, b) {
+		return {$: 'FracMul', a: a, b: b};
+	});
+var author$project$Main$MulFrac = F2(
+	function (a, b) {
+		return {$: 'MulFrac', a: a, b: b};
+	});
 var elm$random$Random$map2 = F3(
 	function (func, _n0, _n1) {
 		var genA = _n0.a;
@@ -5753,11 +5769,36 @@ var author$project$Main$genLevel3 = author$project$Main$toFloatExpr(
 						A2(elm$random$Random$int, 0, 9),
 						A2(elm$random$Random$int, 0, 9),
 						elm$random$Random$constant(2));
+				case 2:
+					return A2(
+						elm$random$Random$andThen,
+						function (j) {
+							if (!j) {
+								return A3(
+									elm$random$Random$map2,
+									F2(
+										function (a, b) {
+											return A2(author$project$Main$MulFrac, a * b, a);
+										}),
+									A2(elm$random$Random$int, 1, 9),
+									A2(elm$random$Random$int, 0, 9));
+							} else {
+								return A3(
+									elm$random$Random$map2,
+									F2(
+										function (a, b) {
+											return A2(author$project$Main$FracMul, a * b, a);
+										}),
+									A2(elm$random$Random$int, 1, 9),
+									A2(elm$random$Random$int, 0, 9));
+							}
+						},
+						A2(elm$random$Random$int, 0, 1));
 				default:
 					return author$project$Main$genLevel2;
 			}
 		},
-		A2(elm$random$Random$int, 0, 2)));
+		A2(elm$random$Random$int, 0, 3)));
 var author$project$Main$Exp = F2(
 	function (a, b) {
 		return {$: 'Exp', a: a, b: b};
@@ -6200,6 +6241,75 @@ var author$project$Main$strWorst = function (lang) {
 		return '时间，式子';
 	}
 };
+var elm$html$Html$table = _VirtualDom_node('table');
+var elm$html$Html$td = _VirtualDom_node('td');
+var elm$html$Html$tr = _VirtualDom_node('tr');
+var elm$html$Html$Attributes$rowspan = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'rowspan',
+		elm$core$String$fromInt(n));
+};
+var author$project$Main$fracExpr = F4(
+	function (pre, a, b, post) {
+		return A2(
+			elm$html$Html$table,
+			_List_fromArray(
+				[
+					A2(elm$html$Html$Attributes$style, 'font-size', '72px'),
+					A2(elm$html$Html$Attributes$style, 'width', '15%'),
+					A2(elm$html$Html$Attributes$style, 'margin-left', 'auto'),
+					A2(elm$html$Html$Attributes$style, 'margin-right', 'auto')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$tr,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$rowspan(2)
+								]),
+							pre),
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'border-bottom', 'solid 1px')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									elm$core$String$fromInt(a))
+								])),
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$rowspan(2)
+								]),
+							post)
+						])),
+					A2(
+					elm$html$Html$tr,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$td,
+							_List_Nil,
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									elm$core$String$fromInt(b))
+								]))
+						]))
+				]));
+	});
 var elm$core$String$fromFloat = _String_fromNumber;
 var author$project$Main$repr = function (expr) {
 	switch (expr.$) {
@@ -6216,6 +6326,14 @@ var author$project$Main$repr = function (expr) {
 			var b = expr.b;
 			return elm$core$String$fromInt(a) + (' × ' + elm$core$String$fromInt(b));
 		case 'Div':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
+		case 'MulFrac':
+			var a = expr.a;
+			var b = expr.b;
+			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
+		case 'FracMul':
 			var a = expr.a;
 			var b = expr.b;
 			return elm$core$String$fromInt(a) + (' ÷ ' + elm$core$String$fromInt(b));
@@ -6327,6 +6445,52 @@ var author$project$Main$textExpr = function (expr) {
 								elm$html$Html$text(
 								elm$core$String$fromInt(a))
 							]))
+					]));
+		case 'FracMul':
+			var a = expr.a;
+			var b = expr.b;
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						A4(
+						author$project$Main$fracExpr,
+						_List_Nil,
+						1,
+						b,
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								' × ' + elm$core$String$fromInt(a))
+							]))
+					]));
+		case 'MulFrac':
+			var a = expr.a;
+			var b = expr.b;
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'font-size', '96px'),
+						A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+					]),
+				_List_fromArray(
+					[
+						A4(
+						author$project$Main$fracExpr,
+						_List_fromArray(
+							[
+								elm$html$Html$text(
+								elm$core$String$fromInt(a) + ' × ')
+							]),
+						1,
+						b,
+						_List_Nil)
 					]));
 		default:
 			return A2(
