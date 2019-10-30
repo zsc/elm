@@ -2,7 +2,7 @@ import Array
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
-import Html.Attributes exposing ( style, placeholder, src, width, href )
+import Html.Attributes exposing ( style, placeholder, src, width, href, rowspan )
 import List
 import Maybe
 import Random
@@ -29,6 +29,8 @@ type Expr
  | Minus Float Float
  | Times Int Int
  | Div Int Int
+ | MulFrac Int Int
+ | FracMul Int Int
  | Exp Int Int
  | Log Int Int
  | Sqrt Int
@@ -40,6 +42,8 @@ eval expr = case expr of
     Minus a b -> a - b
     Times a b -> toFloat (a * b)
     Div a b -> toFloat (a // b)
+    MulFrac a b -> toFloat (a // b)
+    FracMul a b -> toFloat (a // b)
     Exp a b -> toFloat (a ^ b)
     Log a b -> logBase (toFloat a) (toFloat b)
     Sqrt a -> sqrt (toFloat a)
@@ -56,10 +60,17 @@ repr expr = case expr of
     Minus a b -> String.fromFloat a ++ " - " ++ String.fromFloat b
     Times a b -> String.fromInt a ++ " × " ++ String.fromInt b
     Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
+    MulFrac a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
+    FracMul a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
     Exp a b -> String.fromInt a ++ " ^ " ++ String.fromInt b
     Log a b -> "log(" ++ String.fromInt a ++ ", " ++ String.fromInt b ++ ")"
     Sqrt a -> "sqrt(" ++ String.fromInt a ++ ")"
     PlusSqrt a b -> "sqrt(" ++ String.fromInt (a + b) ++ " + " ++ "sqrt(" ++ String.fromInt (4 * a * b) ++ "))"
+
+fracExpr pre a b post = table [style "font-size" "72px", style "width" "15%", style "margin-left" "auto", style "margin-right" "auto"] [
+        tr [] [td [rowspan 2] pre, td [style "border-bottom" "solid 1px"] [text (String.fromInt a)], td [rowspan 2] post]
+        ,tr [] [td [] [text (String.fromInt b)]]
+    ]
 
 textExpr expr = case expr of
     Log a b -> div [style "font-size" "96px", style "text-align" "center"] 
@@ -68,6 +79,10 @@ textExpr expr = case expr of
                    [text (String.fromInt a), sup [style "font-size" "72px"] [text (String.fromInt b)]]
     Sqrt a -> div [style "font-size" "96px", style "text-align" "center"]
                   [span [style "font-size" "72px"] [text "√"], span [style "text-decoration" "overline"] [text (String.fromInt a)]]
+    FracMul a b -> div [style "font-size" "96px", style "text-align" "center"]
+                   [fracExpr [] 1 b [text (" × " ++ String.fromInt a)]]
+    MulFrac a b -> div [style "font-size" "96px", style "text-align" "center"]
+                   [fracExpr [text (String.fromInt a ++ " × ")] 1 b []]
     _ -> div [style "font-size" "96px", style "text-align" "center"] [text (repr expr)]
 
 toExpr : Int -> Int -> Int -> Expr
@@ -129,10 +144,14 @@ toFloatExpr exprs =
 
 genLevel3 : Random.Generator Expr
 genLevel3 =
-  Random.int 0 2 |> Random.andThen
+  Random.int 0 3 |> Random.andThen
       (\i -> case i of
            0 -> Random.map2 (\a b -> Div (a * b) a) (Random.int 1 9) (Random.int 0 9)
            1 -> Random.map3 toExpr (Random.int 0 9) (Random.int 0 9) (Random.constant 2)
+           2 -> Random.int 0 1 |> Random.andThen (\j -> case j of
+                 0 -> Random.map2 (\a b -> MulFrac (a * b) a) (Random.int 1 9) (Random.int 0 9)
+                 _ -> Random.map2 (\a b -> FracMul (a * b) a) (Random.int 1 9) (Random.int 0 9)
+                 )
            _ -> genLevel2)
   |> toFloatExpr
 
