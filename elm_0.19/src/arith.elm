@@ -37,7 +37,8 @@ type Expr
  | PlusSqrt Int Int
 
 eval : Expr -> Float
-eval expr = case expr of
+eval expr = toFloat (round ((eval1 expr) * 100.0)) / 100.0
+eval1 expr = case expr of
     Plus a b -> a + b
     Minus a b -> a - b
     Times a b -> toFloat (a * b)
@@ -68,7 +69,7 @@ repr expr = case expr of
     Sqrt a -> "sqrt(" ++ String.fromInt a ++ ")"
     PlusSqrt a b -> "sqrt(" ++ String.fromInt (a + b) ++ " + " ++ "sqrt(" ++ String.fromInt (4 * a * b) ++ "))"
 
-fracExpr pre a b post = table [style "font-size" "72px", style "width" "15%", style "margin-left" "auto", style "margin-right" "auto"] [
+fracExpr pre a b post = table [style "font-size" "72px", style "width" "20%", style "margin-left" "auto", style "margin-right" "auto"] [
         tr [] [td [rowspan 2] pre, td [style "border-bottom" "solid 1px"] [text (String.fromInt a)], td [rowspan 2] post]
         ,tr [] [td [] [text (String.fromInt b)]]
     ]
@@ -316,11 +317,11 @@ view model =
     , div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px", style "text-align" "center"]
           [ text (strLevel model.lang ++ " " ++ String.fromInt model.level ++ ": " ++ levelDescription model.lang model.level)]
-    , div [style "font-size" "32px"] [text "　"]
-    , textExpr model.dieFace
-    , div [style "text-align" "center"] [buttonN]
+    --, div [style "font-size" "32px"] [text "　"]
+    --, div [style "text-align" "center"] [buttonN]
     , div [style "text-align" "center", style "font-size" "32px"] [text model.input]
     , div [style "text-align" "center"] inputButtons
+    , textExpr model.dieFace
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
     , div [style "font-size" "24px"] [text (strWorst model.lang)]
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)) ++ [

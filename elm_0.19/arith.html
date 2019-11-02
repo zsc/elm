@@ -5422,7 +5422,7 @@ var author$project$Main$NewFace = function (a) {
 var author$project$Main$Roll = {$: 'Roll'};
 var elm$core$Basics$pow = _Basics_pow;
 var elm$core$Basics$sqrt = _Basics_sqrt;
-var author$project$Main$eval = function (expr) {
+var author$project$Main$eval1 = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
 			var a = expr.a;
@@ -5468,6 +5468,11 @@ var author$project$Main$eval = function (expr) {
 			var b = expr.b;
 			return elm$core$Basics$sqrt(a) + elm$core$Basics$sqrt(b);
 	}
+};
+var elm$core$Basics$round = _Basics_round;
+var author$project$Main$eval = function (expr) {
+	return elm$core$Basics$round(
+		author$project$Main$eval1(expr) * 100.0) / 100.0;
 };
 var elm$core$String$toFloat = _String_toFloat;
 var author$project$Main$is_match = F2(
@@ -5568,8 +5573,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 96, column: 12},
-						end: {line: 96, column: 22}
+						start: {line: 97, column: 12},
+						end: {line: 97, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -6097,6 +6102,9 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 		}
 	});
+var author$project$Main$Input = function (a) {
+	return {$: 'Input', a: a};
+};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
@@ -6133,20 +6141,6 @@ var elm$html$Html$Events$onClick = function (msg) {
 		elm$html$Html$Events$on,
 		'click',
 		elm$json$Json$Decode$succeed(msg));
-};
-var author$project$Main$buttonN = A2(
-	elm$html$Html$button,
-	_List_fromArray(
-		[
-			elm$html$Html$Events$onClick(author$project$Main$Roll),
-			A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-		]),
-	_List_fromArray(
-		[
-			elm$html$Html$text('Next')
-		]));
-var author$project$Main$Input = function (a) {
-	return {$: 'Input', a: a};
 };
 var author$project$Main$inputButtons = A2(
 	elm$core$List$map,
@@ -6241,7 +6235,6 @@ var author$project$Main$levelDescription = F2(
 				}
 		}
 	});
-var elm$core$Basics$round = _Basics_round;
 var elm$core$List$drop = F2(
 	function (n, list) {
 		drop:
@@ -6348,7 +6341,7 @@ var author$project$Main$fracExpr = F4(
 			_List_fromArray(
 				[
 					A2(elm$html$Html$Attributes$style, 'font-size', '72px'),
-					A2(elm$html$Html$Attributes$style, 'width', '15%'),
+					A2(elm$html$Html$Attributes$style, 'width', '20%'),
 					A2(elm$html$Html$Attributes$style, 'margin-left', 'auto'),
 					A2(elm$html$Html$Attributes$style, 'margin-right', 'auto')
 				]),
@@ -6852,25 +6845,6 @@ var author$project$Main$view = function (model) {
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('　')
-						])),
-					author$project$Main$textExpr(model.dieFace),
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
-						]),
-					_List_fromArray(
-						[author$project$Main$buttonN])),
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
 							A2(elm$html$Html$Attributes$style, 'text-align', 'center'),
 							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
 						]),
@@ -6885,6 +6859,7 @@ var author$project$Main$view = function (model) {
 							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
 						]),
 					author$project$Main$inputButtons),
+					author$project$Main$textExpr(model.dieFace),
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(
