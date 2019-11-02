@@ -45,6 +45,7 @@ eval expr = case expr of
     MulFrac a b -> toFloat (a // b)
     FracMul a b -> toFloat (a // b)
     Exp a b -> toFloat (a ^ b)
+    Log 1 1 -> 0.0
     Log a b -> logBase (toFloat a) (toFloat b)
     Sqrt a -> sqrt (toFloat a)
     PlusSqrt a b -> sqrt (toFloat a) + sqrt (toFloat b)
@@ -120,7 +121,7 @@ levelDescription lang level = case level of
       LChinese -> "百以下加减法"
   3 -> case lang of
       LEngish -> "Plus/minus/times/division under 100"
-      LChinese -> "百以下加减乘除"
+      LChinese -> "百以下加减乘除（含分数）"
   4 -> case lang of
       LEngish -> "Plus/minus/time/divsion under 100 and exponentation under 10."
       LChinese -> "百以下加减乘除和十以下指数"

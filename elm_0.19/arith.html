@@ -5453,9 +5453,13 @@ var author$project$Main$eval = function (expr) {
 			var b = expr.b;
 			return A2(elm$core$Basics$pow, a, b);
 		case 'Log':
-			var a = expr.a;
-			var b = expr.b;
-			return A2(elm$core$Basics$logBase, a, b);
+			if ((expr.a === 1) && (expr.b === 1)) {
+				return 0.0;
+			} else {
+				var a = expr.a;
+				var b = expr.b;
+				return A2(elm$core$Basics$logBase, a, b);
+			}
 		case 'Sqrt':
 			var a = expr.a;
 			return elm$core$Basics$sqrt(a);
@@ -5564,8 +5568,8 @@ var author$project$Main$toExpr = F3(
 				return _Debug_todo(
 					'Main',
 					{
-						start: {line: 95, column: 12},
-						end: {line: 95, column: 22}
+						start: {line: 96, column: 12},
+						end: {line: 96, column: 22}
 					})(
 					'Unknown operator: ' + elm$core$String$fromInt(op));
 		}
@@ -6215,7 +6219,7 @@ var author$project$Main$levelDescription = F2(
 				if (lang.$ === 'LEngish') {
 					return 'Plus/minus/times/division under 100';
 				} else {
-					return '百以下加减乘除';
+					return '百以下加减乘除（含分数）';
 				}
 			case 4:
 				if (lang.$ === 'LEngish') {
