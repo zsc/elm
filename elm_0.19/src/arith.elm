@@ -194,6 +194,7 @@ type Language =
 
 type alias Model =
   { dieFace : Expr
+  , input : String
   , time : Time.Posix
   , clicks : List Click
   , level : Int
@@ -203,7 +204,7 @@ type alias Model =
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel, lang = LChinese}
+  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel, lang = LChinese, input = "　"}
   , Cmd.none
   )
 
@@ -230,13 +231,31 @@ type Msg
   | NewFace Expr
   | Tick Time.Posix
   | Change Int
+  | Input String
 
+merge_input c str_in =
+  let str = if str_in == "　" then "" else str_in in
+  case c of
+    "+/-" -> if String.startsWith "-" str then String.dropLeft 1 str else "-" ++ str
+    "." -> if String.contains "." str then str else str ++ c
+    "AC" -> "　"
+    _ -> str ++ c
+
+is_match str val =
+  case String.toFloat str of
+    Nothing -> False
+    Just val2 -> val2 == val
+
+proc_input c model =
+  let input = merge_input c model.input in
+  if is_match input (eval model.dieFace) then (model, Random.generate (\_-> Roll) (rand 1)) else ( { model | input = input}, Cmd.none)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    Input c -> proc_input c model
     Roll ->
-      ( { model | clicks = {time = model.time, expr = model.dieFace} :: model.clicks}
+      ( { model | input = "　", clicks = {time = model.time, expr = model.dieFace} :: model.clicks}
       , Random.generate NewFace (rand model.level)
       )
 
@@ -284,6 +303,10 @@ levelButtons curLevel = List.map
                 [text (String.fromInt l)]) 
   [1, 2, 3, 4, 5, 6]
 
+inputButtons = List.map
+  (\l -> button ([onClick (Input l), style "font-size" "32px"]) [text l]) 
+  (["AC", ".", "+/-"] ++ List.map String.fromInt (List.range 0 9))
+
 view : Model -> Html Msg
 view model =
   div []
@@ -295,6 +318,8 @@ view model =
     , div [style "font-size" "32px"] [text "　"]
     , textExpr model.dieFace
     , div [style "text-align" "center"] [buttonN]
+    , div [style "text-align" "center", style "font-size" "32px"] [text model.input]
+    , div [style "text-align" "center"] inputButtons
     , div [style "font-size" "32px"] [ text (strStat model.lang (stat model.clicks))]
     , div [style "font-size" "24px"] [text (strWorst model.lang)]
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)) ++ [

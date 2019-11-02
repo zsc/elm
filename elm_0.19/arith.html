@@ -4898,6 +4898,7 @@ var author$project$Main$init = function (_n0) {
 		{
 			clicks: _List_Nil,
 			dieFace: A2(author$project$Main$Plus, 1, 1),
+			input: '　',
 			lang: author$project$Main$LChinese,
 			level: author$project$Main$defaultLevel,
 			time: elm$time$Time$millisToPosix(0)
@@ -5418,10 +5419,7 @@ var author$project$Main$subscriptions = function (model) {
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
-var author$project$Main$PlusSqrt = F2(
-	function (a, b) {
-		return {$: 'PlusSqrt', a: a, b: b};
-	});
+var author$project$Main$Roll = {$: 'Roll'};
 var elm$core$Basics$pow = _Basics_pow;
 var elm$core$Basics$sqrt = _Basics_sqrt;
 var author$project$Main$eval = function (expr) {
@@ -5467,6 +5465,47 @@ var author$project$Main$eval = function (expr) {
 			return elm$core$Basics$sqrt(a) + elm$core$Basics$sqrt(b);
 	}
 };
+var elm$core$String$toFloat = _String_toFloat;
+var author$project$Main$is_match = F2(
+	function (str, val) {
+		var _n0 = elm$core$String$toFloat(str);
+		if (_n0.$ === 'Nothing') {
+			return false;
+		} else {
+			var val2 = _n0.a;
+			return _Utils_eq(val2, val);
+		}
+	});
+var elm$core$String$contains = _String_contains;
+var elm$core$String$length = _String_length;
+var elm$core$String$slice = _String_slice;
+var elm$core$String$dropLeft = F2(
+	function (n, string) {
+		return (n < 1) ? string : A3(
+			elm$core$String$slice,
+			n,
+			elm$core$String$length(string),
+			string);
+	});
+var elm$core$String$startsWith = _String_startsWith;
+var author$project$Main$merge_input = F2(
+	function (c, str_in) {
+		var str = (str_in === '　') ? '' : str_in;
+		switch (c) {
+			case '+/-':
+				return A2(elm$core$String$startsWith, '-', str) ? A2(elm$core$String$dropLeft, 1, str) : ('-' + str);
+			case '.':
+				return A2(elm$core$String$contains, '.', str) ? str : _Utils_ap(str, c);
+			case 'AC':
+				return '　';
+			default:
+				return _Utils_ap(str, c);
+		}
+	});
+var author$project$Main$PlusSqrt = F2(
+	function (a, b) {
+		return {$: 'PlusSqrt', a: a, b: b};
+	});
 var elm$random$Random$Generator = function (a) {
 	return {$: 'Generator', a: a};
 };
@@ -5991,9 +6030,31 @@ var elm$random$Random$generate = F2(
 			elm$random$Random$Generate(
 				A2(elm$random$Random$map, tagger, generator)));
 	});
+var author$project$Main$proc_input = F2(
+	function (c, model) {
+		var input = A2(author$project$Main$merge_input, c, model.input);
+		return A2(
+			author$project$Main$is_match,
+			input,
+			author$project$Main$eval(model.dieFace)) ? _Utils_Tuple2(
+			model,
+			A2(
+				elm$random$Random$generate,
+				function (_n0) {
+					return author$project$Main$Roll;
+				},
+				author$project$Main$rand(1))) : _Utils_Tuple2(
+			_Utils_update(
+				model,
+				{input: input}),
+			elm$core$Platform$Cmd$none);
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
+			case 'Input':
+				var c = msg.a;
+				return A2(author$project$Main$proc_input, c, model);
 			case 'Roll':
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -6002,7 +6063,8 @@ var author$project$Main$update = F2(
 							clicks: A2(
 								elm$core$List$cons,
 								{expr: model.dieFace, time: model.time},
-								model.clicks)
+								model.clicks),
+							input: '　'
 						}),
 					A2(
 						elm$random$Random$generate,
@@ -6031,7 +6093,6 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 		}
 	});
-var author$project$Main$Roll = {$: 'Roll'};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
@@ -6080,6 +6141,32 @@ var author$project$Main$buttonN = A2(
 		[
 			elm$html$Html$text('Next')
 		]));
+var author$project$Main$Input = function (a) {
+	return {$: 'Input', a: a};
+};
+var author$project$Main$inputButtons = A2(
+	elm$core$List$map,
+	function (l) {
+		return A2(
+			elm$html$Html$button,
+			_List_fromArray(
+				[
+					elm$html$Html$Events$onClick(
+					author$project$Main$Input(l)),
+					A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(l)
+				]));
+	},
+	_Utils_ap(
+		_List_fromArray(
+			['AC', '.', '+/-']),
+		A2(
+			elm$core$List$map,
+			elm$core$String$fromInt,
+			A2(elm$core$List$range, 0, 9))));
 var author$project$Main$Change = function (a) {
 	return {$: 'Change', a: a};
 };
@@ -6780,6 +6867,24 @@ var author$project$Main$view = function (model) {
 					elm$html$Html$div,
 					_List_fromArray(
 						[
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center'),
+							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(model.input)
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'text-align', 'center')
+						]),
+					author$project$Main$inputButtons),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
 							A2(elm$html$Html$Attributes$style, 'font-size', '32px')
 						]),
 					_List_fromArray(
@@ -6912,17 +7017,6 @@ var elm$core$Task$perform = F2(
 			elm$core$Task$Perform(
 				A2(elm$core$Task$map, toMessage, task)));
 	});
-var elm$core$String$length = _String_length;
-var elm$core$String$slice = _String_slice;
-var elm$core$String$dropLeft = F2(
-	function (n, string) {
-		return (n < 1) ? string : A3(
-			elm$core$String$slice,
-			n,
-			elm$core$String$length(string),
-			string);
-	});
-var elm$core$String$startsWith = _String_startsWith;
 var elm$url$Url$Http = {$: 'Http'};
 var elm$url$Url$Https = {$: 'Https'};
 var elm$core$String$indexes = _String_indexes;
@@ -6933,7 +7027,6 @@ var elm$core$String$left = F2(
 	function (n, string) {
 		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
 	});
-var elm$core$String$contains = _String_contains;
 var elm$core$String$toInt = _String_toInt;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
