@@ -52,7 +52,7 @@ type Msg
   | Change String
   | Tick Time.Posix
 
-update_explain str = List.filter (String.contains str) my_list
+update_explain str = List.take 1000 (List.filter (\x -> String.contains (String.toLower str) (String.toLower x)) my_list)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -91,9 +91,8 @@ levelButtons curLevel = List.map
 view : Model -> Html Msg
 view model =
   div []
-    ([ div [style "text-align" "center"] [a [style "font-size" "24px", href "https://zsc.github.io/637913017.jpg"] [text "打赏"]]
-    , div [style "font-size" "32px"] [text "　"]
-    , div [style "text-align" "center"] (levelButtons model.level)
+    ([
+      div [style "text-align" "center"] (levelButtons model.level)
     , div [style "font-size" "32px"] [input [ placeholder "What to lookup?", value model.field, onInput Change ] []]
     ] ++ List.map (\x -> div [style "font-size" "24px"] [text x]) model.explain
     )
