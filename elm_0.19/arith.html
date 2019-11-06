@@ -6295,10 +6295,11 @@ var author$project$Main$stat = function (clicks) {
 					elm$core$List$drop,
 					elm$core$List$length(cs) - 1,
 					cs)));
+		var precision = 10.0;
 		return _Utils_Tuple2(
 			elm$core$List$length(cs),
 			elm$core$Basics$round(
-				(60000.0 / delta) * (elm$core$List$length(cs) - 1)));
+				((precision * 60000.0) / delta) * (elm$core$List$length(cs) - 1)) / precision);
 	}
 };
 var author$project$Main$strLevel = function (lang) {
@@ -6308,14 +6309,15 @@ var author$project$Main$strLevel = function (lang) {
 		return '关卡';
 	}
 };
+var elm$core$String$fromFloat = _String_fromNumber;
 var author$project$Main$strStat = F2(
 	function (lang, _n0) {
 		var total = _n0.a;
 		var qps = _n0.b;
 		if (lang.$ === 'LEngish') {
-			return 'Total: ' + (elm$core$String$fromInt(total) + (', per minute: ' + elm$core$String$fromInt(qps)));
+			return 'Total: ' + (elm$core$String$fromInt(total) + (', per minute: ' + elm$core$String$fromFloat(qps)));
 		} else {
-			return '共：' + (elm$core$String$fromInt(total) + ('，每分钟：' + elm$core$String$fromInt(qps)));
+			return '共：' + (elm$core$String$fromInt(total) + ('，每分钟：' + elm$core$String$fromFloat(qps)));
 		}
 	});
 var author$project$Main$strWorst = function (lang) {
@@ -6394,7 +6396,6 @@ var author$project$Main$fracExpr = F4(
 						]))
 				]));
 	});
-var elm$core$String$fromFloat = _String_fromNumber;
 var author$project$Main$repr = function (expr) {
 	switch (expr.$) {
 		case 'Plus':
