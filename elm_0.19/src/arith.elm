@@ -218,12 +218,13 @@ worst clicks =
       let top = List.take 3 (List.reverse (List.sortBy (\(a,b) -> b) diffs)) in
       (List.map (\(a, b) -> text (String.fromInt (round (toFloat b / 100.0)) ++ ", " ++ reprEval a)) top)
 
-stat : List Click -> (Int, Int)
+stat : List Click -> (Int, Float)
 stat clicks =
     if List.length clicks < 2 then (0, 0) else
         let cs = List.map (\h -> Time.posixToMillis h.time) clicks in
         let delta = (Maybe.withDefault 0 (List.head cs)) - (Maybe.withDefault 0 (List.head (List.drop (List.length cs - 1) cs))) in
-        (List.length cs, round (60000.0 / (toFloat delta) * (toFloat (List.length cs - 1))))
+        let precision = 10.0 in 
+        (List.length cs, toFloat (round (precision * 60000.0 / (toFloat delta) * (toFloat (List.length cs - 1)))) / precision)
 
 -- UPDATE
 
@@ -287,8 +288,8 @@ subscriptions model =
 -- VIEW
 
 strStat lang (total, qps) = case lang of
-  LEngish -> "Total: " ++ String.fromInt total ++ ", per minute: " ++ String.fromInt qps
-  LChinese -> "共：" ++ String.fromInt total ++ "，每分钟：" ++ String.fromInt qps
+  LEngish -> "Total: " ++ String.fromInt total ++ ", per minute: " ++ String.fromFloat qps
+  LChinese -> "共：" ++ String.fromInt total ++ "，每分钟：" ++ String.fromFloat qps
 
 strLevel lang = case lang of
   LEngish -> "Level"
