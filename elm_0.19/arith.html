@@ -5422,6 +5422,8 @@ var author$project$Main$Input = function (a) {
 var author$project$Main$NewFace = function (a) {
 	return {$: 'NewFace', a: a};
 };
+var author$project$Main$keys = _List_fromArray(
+	['.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', 'c']);
 var author$project$Main$number_limit = 30;
 var author$project$Main$Roll = {$: 'Roll'};
 var elm$core$Basics$pow = _Basics_pow;
@@ -6062,6 +6064,46 @@ var author$project$Main$proc_input = F2(
 				{input: input}),
 			elm$core$Platform$Cmd$none);
 	});
+var author$project$Main$translate_key = function (c) {
+	switch (c) {
+		case '-':
+			return '+/-';
+		case 'c':
+			return 'AC';
+		default:
+			return c;
+	}
+};
+var elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6070,14 +6112,15 @@ var author$project$Main$update = F2(
 				var _n1 = event.key;
 				if (_n1.$ === 'Just') {
 					var c = _n1.a;
-					return _Utils_Tuple2(
+					return A2(elm$core$List$member, c, author$project$Main$keys) ? _Utils_Tuple2(
 						model,
 						A2(
 							elm$random$Random$generate,
 							function (_n2) {
-								return author$project$Main$Input(c);
+								return author$project$Main$Input(
+									author$project$Main$translate_key(c));
 							},
-							author$project$Main$rand(1)));
+							author$project$Main$rand(1))) : _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				}
