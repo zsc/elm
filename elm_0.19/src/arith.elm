@@ -11,6 +11,7 @@ import Time
 
 -- MAIN
 
+number_limit = 30
 
 main =
   Browser.element
@@ -58,7 +59,7 @@ reprEval e = case e of
 
 repr : Expr -> String
 repr expr = case expr of
-    Plus a b -> String.fromFloat a ++ " + " ++ String.fromFloat b
+    Plus a b -> if isInfinite a || isInfinite b then "+∞ + +∞ = +∞" else String.fromFloat a ++ " + " ++ String.fromFloat b
     Minus a b -> String.fromFloat a ++ " - " ++ String.fromFloat b
     Times a b -> String.fromInt a ++ " × " ++ String.fromInt b
     Div a b -> String.fromInt a ++ " ÷ " ++ String.fromInt b
@@ -256,7 +257,8 @@ proc_input c model =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Input c -> proc_input c model
+    Input c -> if List.length model.clicks < number_limit then proc_input c model
+        else ({model | input = "　", dieFace = Plus (1/0) (1/0)}, Cmd.none)
     Roll ->
       ( { model | input = "　", clicks = {time = model.time, expr = model.dieFace} :: model.clicks}
       , Random.generate NewFace (rand model.level)
