@@ -2,11 +2,13 @@ import Array
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
-import Html.Attributes exposing ( style, placeholder, src, width, href, rowspan )
+import Html.Attributes exposing ( style, placeholder, src, width, href, rowspan, id, style, tabindex)
 import List
 import Maybe
 import Random
 import Time
+import Json.Decode as Json
+import Keyboard.Event exposing (KeyboardEvent, decodeKeyboardEvent)
 
 
 -- MAIN
@@ -236,6 +238,7 @@ type Msg
   | Tick Time.Posix
   | Change Int
   | Input String
+  | HandleKeyboardEvent KeyboardEvent
 
 merge_input c str_in =
   let str = if str_in == "　" then "" else str_in in
@@ -257,6 +260,10 @@ proc_input c model =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    HandleKeyboardEvent event ->
+        case event.key of
+            Just c -> (model, Random.generate (\_-> Input c) (rand 1))
+            Nothing -> (model, Cmd.none)
     Input c -> if List.length model.clicks < number_limit then proc_input c model
         else ({model | input = "　", dieFace = Plus (1/0) (1/0)}, Cmd.none)
     Roll ->
@@ -314,7 +321,7 @@ inputButtons = List.map
 
 view : Model -> Html Msg
 view model =
-  div []
+  div [tabindex 0, on "keydown" <| Json.map HandleKeyboardEvent decodeKeyboardEvent] [ div []
     ([ div [style "text-align" "center"] [a [style "font-size" "24px", href "https://zsc.github.io/637913017.jpg"] [text "打赏"]]
     , div [style "font-size" "32px"] [text "　"]
     , div [style "text-align" "center"] (levelButtons model.level)
@@ -330,4 +337,4 @@ view model =
     ] ++ (List.map (\x -> div [style "font-size" "32px"] [x]) (worst model.clicks)) ++ [
       div [style "text-align" "right"] 
           [a [style "font-size" "24px", href "https://github.com/zsc/elm/tree/master/elm_0.19"] [text "GitHub"]]]
-    )
+    )]
