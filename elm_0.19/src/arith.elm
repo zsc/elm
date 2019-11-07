@@ -257,12 +257,19 @@ proc_input c model =
   let input = merge_input c model.input in
   if is_match input (eval model.dieFace) then (model, Random.generate (\_-> Roll) (rand 1)) else ( { model | input = input}, Cmd.none)
 
+keys = [".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-", "c"]
+translate_key c =
+  case c of
+    "-" -> "+/-"
+    "c" -> "AC"
+    _ -> c
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     HandleKeyboardEvent event ->
         case event.key of
-            Just c -> (model, Random.generate (\_-> Input c) (rand 1))
+            Just c -> if List.member c keys then (model, Random.generate (\_-> Input (translate_key c)) (rand 1)) else (model, Cmd.none)
             Nothing -> (model, Cmd.none)
     Input c -> if List.length model.clicks < number_limit then proc_input c model
         else ({model | input = "　", dieFace = Plus (1/0) (1/0)}, Cmd.none)
