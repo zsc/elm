@@ -132,9 +132,12 @@ levelDescription lang level = case level of
   5 -> case lang of
       LEngish -> "Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20."
       LChinese -> "百以下加减乘除、十以下指数对数和二十以下平方根"
-  _ -> case lang of
+  6 -> case lang of
       LEngish -> "Experimental"
       LChinese -> "表示成sqrt(a) + sqrt(b)"
+  _ -> case lang of
+      LEngish -> "Plus/minus/time under 1000."
+      LChinese -> "千以下加减乘"
 
 genLevel2 : Random.Generator Expr
 genLevel2 = filterNegative (Random.map3 toExpr (Random.int 0 99) (Random.int 0 99) (Random.int 0 1))
@@ -146,6 +149,14 @@ toFloatExpr exprs =
         Minus a b -> Minus (a / f) (b / f)
         _ -> e in
   Random.map2 trans exprs (Random.uniform 1.0 [10.0, 100.0])
+
+genLevel7 : Random.Generator Expr
+genLevel7 =
+  Random.int 0 1 |> Random.andThen
+        (\i -> case i of
+             0 -> filterNegative (Random.map3 toExpr (Random.int 0 999) (Random.int 0 999) (Random.int 0 1))
+             _ -> filterTooLarge (Random.map3 toExpr (Random.int 10 99) (Random.int 10 99) (Random.int 2 2))
+        )
 
 genLevel3 : Random.Generator Expr
 genLevel3 =
@@ -186,7 +197,8 @@ rand level =
       3 -> genLevel3
       4 -> genLevel4
       5 -> genLevel5
-      _ -> Random.map2 PlusSqrt (Random.int 0 9) (Random.int 0 9)
+      6 -> Random.map2 PlusSqrt (Random.int 0 9) (Random.int 0 9)
+      _ -> genLevel7
 
 type alias Click = 
   { time : Time.Posix
@@ -320,7 +332,7 @@ buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
 levelButtons curLevel = List.map 
   (\l -> button ([onClick (Change l), style "font-size" "32px"] ++ (if curLevel == l then [style "font-weight" "bold"] else []))
                 [text (String.fromInt l)]) 
-  [1, 2, 3, 4, 5, 6]
+  [1, 2, 3, 4, 5, 6, 7]
 
 inputButtons = List.map
   (\l -> button ([onClick (Input l), style "font-size" "32px"]) [text l]) 
