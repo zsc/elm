@@ -5954,6 +5954,28 @@ var author$project$Main$genLevel5 = A2(
 		}
 	},
 	A2(elm$random$Random$int, 0, 5));
+var author$project$Main$genLevel7 = A2(
+	elm$random$Random$andThen,
+	function (i) {
+		if (!i) {
+			return author$project$Main$filterNegative(
+				A4(
+					elm$random$Random$map3,
+					author$project$Main$toExpr,
+					A2(elm$random$Random$int, 0, 999),
+					A2(elm$random$Random$int, 0, 999),
+					A2(elm$random$Random$int, 0, 1)));
+		} else {
+			return author$project$Main$filterTooLarge(
+				A4(
+					elm$random$Random$map3,
+					author$project$Main$toExpr,
+					A2(elm$random$Random$int, 10, 99),
+					A2(elm$random$Random$int, 10, 99),
+					A2(elm$random$Random$int, 2, 2)));
+		}
+	},
+	A2(elm$random$Random$int, 0, 1));
 var author$project$Main$rand = function (level) {
 	switch (level) {
 		case 1:
@@ -5972,12 +5994,14 @@ var author$project$Main$rand = function (level) {
 			return author$project$Main$genLevel4;
 		case 5:
 			return author$project$Main$genLevel5;
-		default:
+		case 6:
 			return A3(
 				elm$random$Random$map2,
 				author$project$Main$PlusSqrt,
 				A2(elm$random$Random$int, 0, 9),
 				A2(elm$random$Random$int, 0, 9));
+		default:
+			return author$project$Main$genLevel7;
 	}
 };
 var elm$random$Random$Generate = function (a) {
@@ -6599,7 +6623,7 @@ var author$project$Main$levelButtons = function (curLevel) {
 					]));
 		},
 		_List_fromArray(
-			[1, 2, 3, 4, 5, 6]));
+			[1, 2, 3, 4, 5, 6, 7]));
 };
 var author$project$Main$levelDescription = F2(
 	function (lang, level) {
@@ -6634,11 +6658,17 @@ var author$project$Main$levelDescription = F2(
 				} else {
 					return '百以下加减乘除、十以下指数对数和二十以下平方根';
 				}
-			default:
+			case 6:
 				if (lang.$ === 'LEngish') {
 					return 'Experimental';
 				} else {
 					return '表示成sqrt(a) + sqrt(b)';
+				}
+			default:
+				if (lang.$ === 'LEngish') {
+					return 'Plus/minus/time under 1000.';
+				} else {
+					return '千以下加减乘';
 				}
 		}
 	});
