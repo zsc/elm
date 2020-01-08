@@ -7,7 +7,8 @@ import List
 import Maybe
 import Random
 import Time
-import Json.Decode
+import Json.Decode as JD
+import Json.Print
 
 
 -- MAIN
@@ -34,7 +35,7 @@ fromJust m_a = case m_a of
   Just v -> v
   Nothing -> Debug.todo "fromJust"
 
-sampleIn = """{
+sampleIn = """[{
     "cmd": "sync",
     "id": 1,
     "ids": [
@@ -47,31 +48,12 @@ sampleIn = """{
         ]
     ],
     "task_id": 0
-}"""
-
-sampleOut = """[details = "1  , sync"]
-```
-{
-    "cmd": "sync",
-    "id": 1,
-    "ids": [
-        [
-            [
-                0
-            ],
-            "ld",
-            0
-        ]
-    ],
-    "task_id": 0
-}
-```
-[/details]"""
+}]"""
 
 init : () -> (Model, Cmd Msg)
 init _ =
   ( { fieldA = sampleIn
-    , fieldB = sampleOut
+    , fieldB = processString sampleIn
     , level = 1
     }
   , Cmd.none
@@ -87,8 +69,33 @@ type Msg
   | ChangeB String
   | Tick Time.Posix
 
+type alias Summary =
+  { id : Int
+  , cmd : String
+  --, eu_idx : Maybe String
+  --, is_param : Maybe Bool
+  --, size : Maybe Int
+  --, layer_name : Maybe String
+  }
+
+jsonDecoder : JD.Decoder (List Summary)
+jsonDecoder = JD.list (JD.map2 Summary
+  (JD.field "id" JD.int)
+  (JD.field "cmd" JD.string)
+  )
+  --(JD.field "eu_idx" (JD.string))
+  --(JD.field "is_param" (JD.bool))
+  --(JD.field "size" (JD.int))
+  --(JD.field "_layer_name" (JD.string))
+
+getSummary : String -> String
+getSummary x = case JD.decodeString jsonDecoder x of
+  Ok summaries -> String.join "\n" (List.map (\summary -> (String.fromInt summary.id) ++ " " ++ summary.cmd) summaries)
+  Err z -> (JD.errorToString z)  --"Error parsing"
+
 processString : String -> String
-processString x = x ++ x
+processString x = "[details = " ++ getSummary x
+    ++ "]\n" ++ (Result.withDefault "" (Json.Print.prettyString {indent = 4, columns = 60} x)) ++ "\n[/details]"
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
