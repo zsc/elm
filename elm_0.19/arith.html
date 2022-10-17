@@ -4403,7 +4403,7 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$LChinese = {$: 'LChinese'};
+var author$project$Main$LEnglish = {$: 'LEnglish'};
 var author$project$Main$Plus = F2(
 	function (a, b) {
 		return {$: 'Plus', a: a, b: b};
@@ -4899,7 +4899,7 @@ var author$project$Main$init = function (_n0) {
 			clicks: _List_Nil,
 			dieFace: A2(author$project$Main$Plus, 1, 1),
 			input: '　',
-			lang: author$project$Main$LChinese,
+			lang: author$project$Main$LEnglish,
 			level: author$project$Main$defaultLevel,
 			time: elm$time$Time$millisToPosix(0)
 		},
@@ -6629,43 +6629,43 @@ var author$project$Main$levelDescription = F2(
 	function (lang, level) {
 		switch (level) {
 			case 1:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Plus/minus under 10';
 				} else {
 					return '十以下加减法';
 				}
 			case 2:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Plus/minus under 100';
 				} else {
 					return '百以下加减法';
 				}
 			case 3:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Plus/minus/times/division under 100';
 				} else {
 					return '百以下加减乘除（含分数）';
 				}
 			case 4:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Plus/minus/time/divsion under 100 and exponentation under 10.';
 				} else {
 					return '百以下加减乘除和十以下指数';
 				}
 			case 5:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20.';
 				} else {
 					return '百以下加减乘除、十以下指数对数和二十以下平方根';
 				}
 			case 6:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Experimental';
 				} else {
 					return '表示成sqrt(a) + sqrt(b)';
 				}
 			default:
-				if (lang.$ === 'LEngish') {
+				if (lang.$ === 'LEnglish') {
 					return 'Plus/minus/time under 1000.';
 				} else {
 					return '千以下加减乘';
@@ -6740,7 +6740,7 @@ var author$project$Main$stat = function (clicks) {
 	}
 };
 var author$project$Main$strLevel = function (lang) {
-	if (lang.$ === 'LEngish') {
+	if (lang.$ === 'LEnglish') {
 		return 'Level';
 	} else {
 		return '关卡';
@@ -6751,14 +6751,14 @@ var author$project$Main$strStat = F2(
 	function (lang, _n0) {
 		var total = _n0.a;
 		var qps = _n0.b;
-		if (lang.$ === 'LEngish') {
+		if (lang.$ === 'LEnglish') {
 			return 'Total: ' + (elm$core$String$fromInt(total) + (', per minute: ' + elm$core$String$fromFloat(qps)));
 		} else {
 			return '共：' + (elm$core$String$fromInt(total) + ('，每分钟：' + elm$core$String$fromFloat(qps)));
 		}
 	});
 var author$project$Main$strWorst = function (lang) {
-	if (lang.$ === 'LEngish') {
+	if (lang.$ === 'LEnglish') {
 		return 'Time, Expr';
 	} else {
 		return '时间，式子';

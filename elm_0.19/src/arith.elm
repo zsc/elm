@@ -118,25 +118,25 @@ filterNegative g =
 levelDescription : Language -> Int -> String
 levelDescription lang level = case level of
   1 -> case lang of
-      LEngish -> "Plus/minus under 10"
+      LEnglish -> "Plus/minus under 10"
       LChinese -> "十以下加减法"
   2 -> case lang of
-      LEngish -> "Plus/minus under 100"
+      LEnglish -> "Plus/minus under 100"
       LChinese -> "百以下加减法"
   3 -> case lang of
-      LEngish -> "Plus/minus/times/division under 100"
+      LEnglish -> "Plus/minus/times/division under 100"
       LChinese -> "百以下加减乘除（含分数）"
   4 -> case lang of
-      LEngish -> "Plus/minus/time/divsion under 100 and exponentation under 10."
+      LEnglish -> "Plus/minus/time/divsion under 100 and exponentation under 10."
       LChinese -> "百以下加减乘除和十以下指数"
   5 -> case lang of
-      LEngish -> "Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20."
+      LEnglish -> "Plus/minus/time/divsion under 100, exponentation under 10 and square root under 20."
       LChinese -> "百以下加减乘除、十以下指数对数和二十以下平方根"
   6 -> case lang of
-      LEngish -> "Experimental"
+      LEnglish -> "Experimental"
       LChinese -> "表示成sqrt(a) + sqrt(b)"
   _ -> case lang of
-      LEngish -> "Plus/minus/time under 1000."
+      LEnglish -> "Plus/minus/time under 1000."
       LChinese -> "千以下加减乘"
 
 genLevel2 : Random.Generator Expr
@@ -206,7 +206,7 @@ type alias Click =
   }
 
 type Language =
-  LEngish
+  LEnglish
   | LChinese
 
 type alias Model =
@@ -221,7 +221,7 @@ type alias Model =
 
 init : () -> (Model, Cmd Msg)
 init _ =
-  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel, lang = LChinese, input = "　"}
+  ( {dieFace = Plus 1 1, time = Time.millisToPosix 0, clicks = [], level = defaultLevel, lang = LEnglish, input = "　"}
   , Cmd.none
   )
 
@@ -316,15 +316,15 @@ subscriptions model =
 -- VIEW
 
 strStat lang (total, qps) = case lang of
-  LEngish -> "Total: " ++ String.fromInt total ++ ", per minute: " ++ String.fromFloat qps
+  LEnglish -> "Total: " ++ String.fromInt total ++ ", per minute: " ++ String.fromFloat qps
   LChinese -> "共：" ++ String.fromInt total ++ "，每分钟：" ++ String.fromFloat qps
 
 strLevel lang = case lang of
-  LEngish -> "Level"
+  LEnglish -> "Level"
   LChinese -> "关卡"
 
 strWorst lang = case lang of
-  LEngish -> "Time, Expr"
+  LEnglish -> "Time, Expr"
   LChinese -> "时间，式子"
 
 buttonN = button [ onClick Roll, style "font-size" "32px"] [text "Next"]
